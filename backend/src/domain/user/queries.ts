@@ -1,5 +1,6 @@
-import { QueryResolvers } from "../../types.js"
+import { QueryResolvers, Resolvers } from "../../types.js"
 import { WithRequired } from "../../utils/mapped-types"
+
 
 type UsersQueries = WithRequired<QueryResolvers, 'getUsers'>
 
@@ -45,3 +46,17 @@ export const UsersQueries: UsersQueries = {
 
   },
 }
+
+
+
+export const UserResolvers: Resolvers['Users'] = {
+    followers: async (parent, _, {dataSources :{db}}) =>{
+        const res = await db.followers.findMany({include :{ follower : true} , where :{followingId : parent.id}})
+        return res.map(item => item.follower)
+    },
+
+    following: async (parent, _, {dataSources :{db}}) =>{
+        const res = await db.followers.findMany({include :{ following : true} , where :{followerId : parent.id}})
+        return res.map(item => item.following)
+    }
+  }
