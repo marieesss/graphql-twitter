@@ -33,6 +33,14 @@ export type Film = {
   title?: Maybe<Scalars['String']['output']>;
 };
 
+export type GetUsersResponse = {
+  __typename?: 'GetUsersResponse';
+  code: Scalars['Int']['output'];
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+  users?: Maybe<Array<Maybe<Users>>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createUser?: Maybe<CreateUserResponse>;
@@ -76,7 +84,12 @@ export type Query = {
   __typename?: 'Query';
   getFilms: Array<Maybe<Film>>;
   getPeople: Array<Maybe<People>>;
-  getUsers: Array<Maybe<Users>>;
+  getUsers?: Maybe<GetUsersResponse>;
+};
+
+
+export type QueryGetUsersArgs = {
+  userId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type SigninResponse = {
@@ -95,9 +108,6 @@ export type User = {
 
 export type Users = {
   __typename?: 'Users';
-  Followers: Array<Maybe<Users>>;
-  Following: Array<Maybe<Users>>;
-  Posts: Array<Maybe<Posts>>;
   bio?: Maybe<Scalars['String']['output']>;
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
@@ -180,6 +190,7 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CreateUserResponse: ResolverTypeWrapper<CreateUserResponse>;
   Film: ResolverTypeWrapper<FilmModel>;
+  GetUsersResponse: ResolverTypeWrapper<GetUsersResponse>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -197,6 +208,7 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
   CreateUserResponse: CreateUserResponse;
   Film: FilmModel;
+  GetUsersResponse: GetUsersResponse;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Mutation: {};
@@ -221,6 +233,14 @@ export type FilmResolvers<ContextType = Context, ParentType extends ResolversPar
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   people?: Resolver<Array<Maybe<ResolversTypes['People']>>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GetUsersResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GetUsersResponse'] = ResolversParentTypes['GetUsersResponse']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  users?: Resolver<Maybe<Array<Maybe<ResolversTypes['Users']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -249,7 +269,7 @@ export type PostsResolvers<ContextType = Context, ParentType extends ResolversPa
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getFilms?: Resolver<Array<Maybe<ResolversTypes['Film']>>, ParentType, ContextType>;
   getPeople?: Resolver<Array<Maybe<ResolversTypes['People']>>, ParentType, ContextType>;
-  getUsers?: Resolver<Array<Maybe<ResolversTypes['Users']>>, ParentType, ContextType>;
+  getUsers?: Resolver<Maybe<ResolversTypes['GetUsersResponse']>, ParentType, ContextType, Partial<QueryGetUsersArgs>>;
 };
 
 export type SigninResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SigninResponse'] = ResolversParentTypes['SigninResponse']> = {
@@ -267,9 +287,6 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
 };
 
 export type UsersResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Users'] = ResolversParentTypes['Users']> = {
-  Followers?: Resolver<Array<Maybe<ResolversTypes['Users']>>, ParentType, ContextType>;
-  Following?: Resolver<Array<Maybe<ResolversTypes['Users']>>, ParentType, ContextType>;
-  Posts?: Resolver<Array<Maybe<ResolversTypes['Posts']>>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -282,6 +299,7 @@ export type UsersResolvers<ContextType = Context, ParentType extends ResolversPa
 export type Resolvers<ContextType = Context> = {
   CreateUserResponse?: CreateUserResponseResolvers<ContextType>;
   Film?: FilmResolvers<ContextType>;
+  GetUsersResponse?: GetUsersResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   People?: PeopleResolvers<ContextType>;
   Posts?: PostsResolvers<ContextType>;
