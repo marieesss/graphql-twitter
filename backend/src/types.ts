@@ -34,6 +34,14 @@ export type CreateUserResponse = {
   user?: Maybe<User>;
 };
 
+export type DeletePostsResponse = {
+  __typename?: 'DeletePostsResponse';
+  code: Scalars['Int']['output'];
+  message: Scalars['String']['output'];
+  post?: Maybe<Posts>;
+  success: Scalars['Boolean']['output'];
+};
+
 export type Film = {
   __typename?: 'Film';
   id?: Maybe<Scalars['ID']['output']>;
@@ -47,6 +55,14 @@ export type Follow = {
   following: Scalars['String']['output'];
 };
 
+export type GetPostsResponse = {
+  __typename?: 'GetPostsResponse';
+  code: Scalars['Int']['output'];
+  message: Scalars['String']['output'];
+  post?: Maybe<Array<Maybe<Posts>>>;
+  success: Scalars['Boolean']['output'];
+};
+
 export type GetUsersResponse = {
   __typename?: 'GetUsersResponse';
   code: Scalars['Int']['output'];
@@ -58,14 +74,24 @@ export type GetUsersResponse = {
 export type Mutation = {
   __typename?: 'Mutation';
   createFollow?: Maybe<CreateFollowResponse>;
+  createPost?: Maybe<PostsResponse>;
   createUser?: Maybe<CreateUserResponse>;
+  deletePost?: Maybe<DeletePostsResponse>;
   signIn?: Maybe<SigninResponse>;
+  updatePost?: Maybe<PostsResponse>;
 };
 
 
 export type MutationCreateFollowArgs = {
   follower: Scalars['String']['input'];
   following: Scalars['String']['input'];
+};
+
+
+export type MutationCreatePostArgs = {
+  image?: InputMaybe<Scalars['String']['input']>;
+  text: Scalars['String']['input'];
+  userId: Scalars['ID']['input'];
 };
 
 
@@ -79,9 +105,21 @@ export type MutationCreateUserArgs = {
 };
 
 
+export type MutationDeletePostArgs = {
+  postId: Scalars['ID']['input'];
+};
+
+
 export type MutationSignInArgs = {
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
+};
+
+
+export type MutationUpdatePostArgs = {
+  image?: InputMaybe<Scalars['String']['input']>;
+  postId: Scalars['ID']['input'];
+  text: Scalars['String']['input'];
 };
 
 export type People = {
@@ -94,18 +132,34 @@ export type People = {
 
 export type Posts = {
   __typename?: 'Posts';
+  date_create: Scalars['String']['output'];
   date_update?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   image?: Maybe<Scalars['String']['output']>;
   text: Scalars['String']['output'];
-  user: Users;
+  user?: Maybe<Users>;
+  userId: Scalars['ID']['output'];
+};
+
+export type PostsResponse = {
+  __typename?: 'PostsResponse';
+  code: Scalars['Int']['output'];
+  message: Scalars['String']['output'];
+  post?: Maybe<Posts>;
+  success: Scalars['Boolean']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
   getFilms: Array<Maybe<Film>>;
   getPeople: Array<Maybe<People>>;
+  getPosts?: Maybe<GetPostsResponse>;
   getUsers?: Maybe<GetUsersResponse>;
+};
+
+
+export type QueryGetPostsArgs = {
+  postId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
@@ -213,14 +267,17 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CreateFollowResponse: ResolverTypeWrapper<CreateFollowResponse>;
   CreateUserResponse: ResolverTypeWrapper<CreateUserResponse>;
+  DeletePostsResponse: ResolverTypeWrapper<DeletePostsResponse>;
   Film: ResolverTypeWrapper<FilmModel>;
   Follow: ResolverTypeWrapper<Follow>;
+  GetPostsResponse: ResolverTypeWrapper<GetPostsResponse>;
   GetUsersResponse: ResolverTypeWrapper<GetUsersResponse>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
   People: ResolverTypeWrapper<PeopleModel>;
   Posts: ResolverTypeWrapper<Posts>;
+  PostsResponse: ResolverTypeWrapper<PostsResponse>;
   Query: ResolverTypeWrapper<{}>;
   SigninResponse: ResolverTypeWrapper<SigninResponse>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
@@ -233,14 +290,17 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
   CreateFollowResponse: CreateFollowResponse;
   CreateUserResponse: CreateUserResponse;
+  DeletePostsResponse: DeletePostsResponse;
   Film: FilmModel;
   Follow: Follow;
+  GetPostsResponse: GetPostsResponse;
   GetUsersResponse: GetUsersResponse;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Mutation: {};
   People: PeopleModel;
   Posts: Posts;
+  PostsResponse: PostsResponse;
   Query: {};
   SigninResponse: SigninResponse;
   String: Scalars['String']['output'];
@@ -264,6 +324,14 @@ export type CreateUserResponseResolvers<ContextType = Context, ParentType extend
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type DeletePostsResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletePostsResponse'] = ResolversParentTypes['DeletePostsResponse']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  post?: Resolver<Maybe<ResolversTypes['Posts']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type FilmResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Film'] = ResolversParentTypes['Film']> = {
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   people?: Resolver<Array<Maybe<ResolversTypes['People']>>, ParentType, ContextType>;
@@ -277,6 +345,14 @@ export type FollowResolvers<ContextType = Context, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type GetPostsResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GetPostsResponse'] = ResolversParentTypes['GetPostsResponse']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  post?: Resolver<Maybe<Array<Maybe<ResolversTypes['Posts']>>>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type GetUsersResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GetUsersResponse'] = ResolversParentTypes['GetUsersResponse']> = {
   code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -287,8 +363,11 @@ export type GetUsersResponseResolvers<ContextType = Context, ParentType extends 
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createFollow?: Resolver<Maybe<ResolversTypes['CreateFollowResponse']>, ParentType, ContextType, RequireFields<MutationCreateFollowArgs, 'follower' | 'following'>>;
+  createPost?: Resolver<Maybe<ResolversTypes['PostsResponse']>, ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'text' | 'userId'>>;
   createUser?: Resolver<Maybe<ResolversTypes['CreateUserResponse']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'email' | 'name' | 'password' | 'surname' | 'username'>>;
+  deletePost?: Resolver<Maybe<ResolversTypes['DeletePostsResponse']>, ParentType, ContextType, RequireFields<MutationDeletePostArgs, 'postId'>>;
   signIn?: Resolver<Maybe<ResolversTypes['SigninResponse']>, ParentType, ContextType, RequireFields<MutationSignInArgs, 'password' | 'username'>>;
+  updatePost?: Resolver<Maybe<ResolversTypes['PostsResponse']>, ParentType, ContextType, RequireFields<MutationUpdatePostArgs, 'postId' | 'text'>>;
 };
 
 export type PeopleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['People'] = ResolversParentTypes['People']> = {
@@ -300,17 +379,28 @@ export type PeopleResolvers<ContextType = Context, ParentType extends ResolversP
 };
 
 export type PostsResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Posts'] = ResolversParentTypes['Posts']> = {
+  date_create?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date_update?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['Users'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['Users']>, ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PostsResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PostsResponse'] = ResolversParentTypes['PostsResponse']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  post?: Resolver<Maybe<ResolversTypes['Posts']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getFilms?: Resolver<Array<Maybe<ResolversTypes['Film']>>, ParentType, ContextType>;
   getPeople?: Resolver<Array<Maybe<ResolversTypes['People']>>, ParentType, ContextType>;
+  getPosts?: Resolver<Maybe<ResolversTypes['GetPostsResponse']>, ParentType, ContextType, Partial<QueryGetPostsArgs>>;
   getUsers?: Resolver<Maybe<ResolversTypes['GetUsersResponse']>, ParentType, ContextType, Partial<QueryGetUsersArgs>>;
 };
 
@@ -343,12 +433,15 @@ export type UsersResolvers<ContextType = Context, ParentType extends ResolversPa
 export type Resolvers<ContextType = Context> = {
   CreateFollowResponse?: CreateFollowResponseResolvers<ContextType>;
   CreateUserResponse?: CreateUserResponseResolvers<ContextType>;
+  DeletePostsResponse?: DeletePostsResponseResolvers<ContextType>;
   Film?: FilmResolvers<ContextType>;
   Follow?: FollowResolvers<ContextType>;
+  GetPostsResponse?: GetPostsResponseResolvers<ContextType>;
   GetUsersResponse?: GetUsersResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   People?: PeopleResolvers<ContextType>;
   Posts?: PostsResolvers<ContextType>;
+  PostsResponse?: PostsResponseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   SigninResponse?: SigninResponseResolvers<ContextType>;
   User?: UserResolvers<ContextType>;

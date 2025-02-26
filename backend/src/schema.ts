@@ -5,11 +5,15 @@ export const typeDefs = gql`
     getFilms: [Film]!
     getPeople: [People]!
     getUsers(userId: ID): GetUsersResponse
+    getPosts(postId: ID): GetPostsResponse
   }
 
   type Mutation {
     createUser(username: String!, password: String!, email : String!, name: String!, surname : String!, bio : String): CreateUserResponse
     signIn(username: String!, password: String!): SigninResponse
+    createPost(text: String!, userId: ID!, image: String ): PostsResponse
+    updatePost(postId: ID!, text: String!, image: String ): PostsResponse
+    deletePost(postId: ID!): DeletePostsResponse
     createFollow(follower: String!, following: String!): CreateFollowResponse
   }
 
@@ -71,9 +75,34 @@ export const typeDefs = gql`
     id: ID!
     text : String!
     user :Users!
+    userId : ID!
     image : String
+    date_create : String!
     date_update:String
   }
+
+
+  type PostsResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    post: Posts
+  }
+
+
+  type GetPostsResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    post: [Posts]
+  }
+
+  type DeletePostsResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+  }
+
 
   type Users{
     id: ID!
