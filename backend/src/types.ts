@@ -38,7 +38,6 @@ export type DeletePostsResponse = {
   __typename?: 'DeletePostsResponse';
   code: Scalars['Int']['output'];
   message: Scalars['String']['output'];
-  post?: Maybe<Posts>;
   success: Scalars['Boolean']['output'];
 };
 
@@ -327,7 +326,6 @@ export type CreateUserResponseResolvers<ContextType = Context, ParentType extend
 export type DeletePostsResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletePostsResponse'] = ResolversParentTypes['DeletePostsResponse']> = {
   code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  post?: Resolver<Maybe<ResolversTypes['Posts']>, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
