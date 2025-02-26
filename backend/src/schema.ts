@@ -113,5 +113,6 @@ export const typeDefs = gql`
     bio:String
     followers: [Users]
     following: [Users]
+    posts: [Posts]
   }
 `;

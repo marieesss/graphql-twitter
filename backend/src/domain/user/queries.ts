@@ -58,5 +58,15 @@ export const UserResolvers: Resolvers['Users'] = {
     following: async (parent, _, {dataSources :{db}}) =>{
         const res = await db.followers.findMany({include :{ following : true} , where :{followerId : parent.id}})
         return res.map(item => item.following)
+    }, 
+    posts: async (parent, _, {dataSources :{db}}) =>{
+        const res = await db.post.findMany({where :{userId : parent.id}})
+
+        const formattedResponse = res.map(post => ({
+            ...post,
+            date_create: post.date_create.toISOString(),
+            date_update: post.date_update.toISOString() 
+          }));
+        return formattedResponse
     }
   }

@@ -188,6 +188,7 @@ export type Users = {
   following?: Maybe<Array<Maybe<Users>>>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
+  posts?: Maybe<Array<Maybe<Posts>>>;
   surname: Scalars['String']['output'];
   username: Scalars['String']['output'];
 };
@@ -423,6 +424,7 @@ export type UsersResolvers<ContextType = Context, ParentType extends ResolversPa
   following?: Resolver<Maybe<Array<Maybe<ResolversTypes['Users']>>>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  posts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Posts']>>>, ParentType, ContextType>;
   surname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
