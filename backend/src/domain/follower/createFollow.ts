@@ -47,7 +47,6 @@ export const createFollow: NonNullable<MutationResolvers['createFollow']> = asyn
       
     }
 
-  if (existingFollower?.id && existingFollowing?.id) {
       const createdFollow = await db.followers.create({
         data : {
           followerId : existingFollower.id, 
@@ -67,16 +66,6 @@ export const createFollow: NonNullable<MutationResolvers['createFollow']> = asyn
         }
       }
 
-  }
-
-
-   
-    return {
-      code: 201,
-      message: 'the follow has been created',
-      success: true,
-      follow: null
-    }
   } catch {
     return {
       code: 400,
