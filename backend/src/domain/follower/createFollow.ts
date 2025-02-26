@@ -51,7 +51,7 @@ export const createFollow: NonNullable<MutationResolvers['createFollow']> = asyn
       const createdFollow = await db.followers.create({
         data : {
           followerId : existingFollower.id, 
-          followingId : existingFollower.id
+          followingId : existingFollowing.id
         }
 
         
