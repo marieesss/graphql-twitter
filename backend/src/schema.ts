@@ -4,12 +4,16 @@ export const typeDefs = gql`
   type Query {
     getFilms: [Film]!
     getPeople: [People]!
-    getUsers(userId: ID): GetUsersResponse
+    getUsers(userId: ID!): GetUsersResponse
+    getPosts(postId: ID): GetPostsResponse
   }
 
   type Mutation {
     createUser(username: String!, password: String!, email : String!, name: String!, surname : String!, bio : String): CreateUserResponse
     signIn(username: String!, password: String!): SigninResponse
+    createPost(text: String!, userId: ID!, image: String ): PostsResponse
+    updatePost(postId: ID!, text: String!, image: String ): PostsResponse
+    deletePost(postId: ID!): DeletePostsResponse
   }
 
   type Film {
@@ -57,10 +61,34 @@ export const typeDefs = gql`
   type Posts{
     id: ID!
     text : String!
-    user :Users!
+    user :User!
     image : String
     date_update:String
   }
+
+
+  type PostsResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    post: Posts
+  }
+
+
+  type GetPostsResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    post: [Posts]
+  }
+
+  type DeletePostsResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    post: Posts
+  }
+
 
   type Users{
     id: ID!
