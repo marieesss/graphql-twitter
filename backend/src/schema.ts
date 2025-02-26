@@ -4,7 +4,7 @@ export const typeDefs = gql`
   type Query {
     getFilms: [Film]!
     getPeople: [People]!
-    getUsers(userId: ID!): GetUsersResponse
+    getUsers(userId: ID): GetUsersResponse
     getPosts(postId: ID): GetPostsResponse
   }
 
