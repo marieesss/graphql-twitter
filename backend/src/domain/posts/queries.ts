@@ -1,12 +1,12 @@
-import { QueryResolvers } from "../../types.js";
+import { QueryResolvers, Resolvers } from "../../types.js";
 import { WithRequired } from "../../utils/mapped-types";
 
 type PostsQueries = WithRequired<QueryResolvers, 'getPosts'>;
 
 export const PostsQueries: PostsQueries = {
-  getPosts: async (_, { postId }, { user, dataSources: { db } }) => {
+  getPosts: async (_, { postId }, { dataSources: { db } }) => {
     try {
-      if (postId !== undefined) {
+      if (postId) {
         const post = await db.post.findFirst({ where: { id: postId } });
         return {
           code: 200,
@@ -20,7 +20,7 @@ export const PostsQueries: PostsQueries = {
           code: 200,
           message: "Posts retrieved",
           success: true,
-          post: posts
+          post: posts ? posts : []
         };
       }
     } catch (error) {
@@ -33,3 +33,22 @@ export const PostsQueries: PostsQueries = {
     }
   }
 };
+
+export const PostsResolvers: Resolvers['Posts'] = {
+  user: async (parent, _, {dataSources :{db}}) =>{
+      try {
+        console.log(parent.id)
+        const res = await db.user.findFirst({ where : { id : parent.userId }})
+        if (!res) {
+          throw new Error(`User not found for post ${parent.id}`);
+        }
+        return res
+      } catch (error) {
+        throw error
+      }
+
+    },
+    date_update: (parent) => {
+      return parent?.date_update.toISOString();
+    }
+  }

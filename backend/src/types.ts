@@ -136,7 +136,8 @@ export type Posts = {
   id: Scalars['ID']['output'];
   image?: Maybe<Scalars['String']['output']>;
   text: Scalars['String']['output'];
-  user: User;
+  user: Users;
+  userId: Scalars['ID']['output'];
 };
 
 export type PostsResponse = {
@@ -381,7 +382,8 @@ export type PostsResolvers<ContextType = Context, ParentType extends ResolversPa
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['Users'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

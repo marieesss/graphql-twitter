@@ -74,8 +74,10 @@ export const typeDefs = gql`
   type Posts{
     id: ID!
     text : String!
-    user :User!
+    user :Users!
+    userId : ID!
     image : String
+    date_create : String!
     date_update:String
   }
 
