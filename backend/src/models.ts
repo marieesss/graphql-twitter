@@ -19,4 +19,12 @@ export type PeopleModel = {
   films: string[]
 }
 
+// export type Follower = {
+//   id: string;
+//   follower: string;
+//   eye_color: string;
+//   films: string[]
+// }
+
+
 export type UserModel = User

@@ -14,6 +14,7 @@ export const typeDefs = gql`
     createPost(text: String!, userId: ID!, image: String ): PostsResponse
     updatePost(postId: ID!, text: String!, image: String ): PostsResponse
     deletePost(postId: ID!): DeletePostsResponse
+    createFollow(follower: String!, following: String!): CreateFollowResponse
   }
 
   type Film {
@@ -41,6 +42,18 @@ export const typeDefs = gql`
     success: Boolean!
     message: String!
     token: String
+  }
+
+  type CreateFollowResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    follow : Follow
+  }
+
+  type Follow{
+    following : String!
+    follower: String!
   }
 
 
@@ -97,5 +110,7 @@ export const typeDefs = gql`
     surname: String!
     email: String!
     bio:String
+    followers: [Users]
+    following: [Users]
   }
 `;
