@@ -30,8 +30,10 @@ export const updatePost: NonNullable<MutationResolvers['updatePost']> = async (
     // Format the date_update field as a string.
     const formattedPost = {
       ...updatedPost,
-      date_update: updatedPost.date_update.toISOString()
+      date_update: updatedPost.date_update ? updatedPost.date_update.toISOString() : '', 
+      date_create: updatedPost.date_create ? updatedPost.date_create.toISOString() : ''
     };
+
 
     return {
       code: 200,

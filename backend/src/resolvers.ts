@@ -1,7 +1,7 @@
 import { FilmResolver, PeopleResolver } from "./domain/ghibli/models.js";
 import { ghibliQueries } from "./domain/ghibli/queries.js";
 import { postMutations } from "./domain/posts/mutations.js";
-import { PostsQueries } from "./domain/posts/queries.js";
+import { PostsQueries, PostsResolvers } from "./domain/posts/queries.js";
 import { userMutations } from "./domain/user/mutations.js";
 import { followMutations } from "./domain/follower/mutations.js";
 import { UserResolvers, UsersQueries } from "./domain/user/queries.js";
@@ -19,5 +19,6 @@ export const resolvers: Resolvers = {
   },
   Film: FilmResolver,
   People: PeopleResolver,
-  Users: UserResolvers
+  Users: UserResolvers, 
+  Posts : PostsResolvers
 }

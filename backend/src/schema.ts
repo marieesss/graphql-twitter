@@ -101,7 +101,6 @@ export const typeDefs = gql`
     code: Int!
     success: Boolean!
     message: String!
-    post: Posts
   }
 
 

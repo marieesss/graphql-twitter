@@ -132,11 +132,12 @@ export type People = {
 
 export type Posts = {
   __typename?: 'Posts';
+  date_create: Scalars['String']['output'];
   date_update?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   image?: Maybe<Scalars['String']['output']>;
   text: Scalars['String']['output'];
-  user: Users;
+  user?: Maybe<Users>;
   userId: Scalars['ID']['output'];
 };
 
@@ -378,11 +379,12 @@ export type PeopleResolvers<ContextType = Context, ParentType extends ResolversP
 };
 
 export type PostsResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Posts'] = ResolversParentTypes['Posts']> = {
+  date_create?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date_update?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<ResolversTypes['Users'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['Users']>, ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

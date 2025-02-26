@@ -33,20 +33,12 @@ export const deletePost: NonNullable<MutationResolvers['deletePost']> = async (
 
   // Delete the post and include the user relation.
   const deletedPost = await db.post.delete({
-    where: { id: postId },
-    include: { user: true }
-  });
-
-  // Format date_update to a string.
-  const formattedPost = {
-    ...deletedPost,
-    date_update: deletedPost.date_update.toISOString()
-  };
+    where: { id: postId }
+    });
 
   return {
     code: 200,
     message: "Post deleted",
     success: true,
-    post: formattedPost
   };
 };
