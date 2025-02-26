@@ -11,6 +11,8 @@ export const typeDefs = gql`
     createUser(username: String!, password: String!, email : String!, name: String!, surname : String!, bio : String): CreateUserResponse
     signIn(username: String!, password: String!): SigninResponse
     createFollow(follower: String!, following: String!): CreateFollowResponse
+    deleteFollowing(following: String!): DeleteResponse
+    deleteFollower(follower: String!): DeleteResponse
   }
 
   type Film {
@@ -58,6 +60,12 @@ export const typeDefs = gql`
     success: Boolean!
     message: String!
     users: [Users]
+  }
+
+    type DeleteResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
   }
  
  

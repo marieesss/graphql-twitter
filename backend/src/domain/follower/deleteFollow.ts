@@ -1,0 +1,70 @@
+import { MutationResolvers } from "../../types.js";
+
+export const deleteFollowing: NonNullable<MutationResolvers['deleteFollowing']> = async (_, {following}, {dataSources: {db}, user}) => {
+  try {
+      // Protected route
+      if(!user){
+        return {
+          code: 401,
+          message: 'Forbidden',
+          success: false
+        }
+      }
+
+      // Delete a row where the follower is the user of the request
+      await db.followers.delete({ where : { followerId_followingId: {
+        followerId: user.id,
+        followingId: following,
+      },}})
+
+      return {
+        code: 200,
+        message: `Follow deleted`,
+        success: false,
+      }
+
+  
+  } catch {
+    return {
+      code: 400,
+      message: 'User has not been created',
+      success: false,
+      user: null
+    }
+  }
+}
+
+
+export const deleteFollower: NonNullable<MutationResolvers['deleteFollower']> = async (_, {follower}, {dataSources: {db}, user}) => {
+  try {
+      // Protected route
+      if(!user){
+        return {
+          code: 401,
+          message: 'Forbidden',
+          success: false
+        }
+      }
+
+      // Delete a row where the follower is the user of the request
+      await db.followers.delete({ where : { followerId_followingId: {
+        followerId: follower,
+        followingId: user.id,
+      },}})
+
+      return {
+        code: 200,
+        message: `Follower deleted`,
+        success: false,
+      }
+
+  
+  } catch {
+    return {
+      code: 400,
+      message: 'Follower has not been deleted',
+      success: false,
+      user: null
+    }
+  }
+}
