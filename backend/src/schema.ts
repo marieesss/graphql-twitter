@@ -10,6 +10,7 @@ export const typeDefs = gql`
   type Mutation {
     createUser(username: String!, password: String!, email : String!, name: String!, surname : String!, bio : String): CreateUserResponse
     signIn(username: String!, password: String!): SigninResponse
+    createFollow(follower: String!, following: String!): CreateFollowResponse
   }
 
   type Film {
@@ -37,6 +38,18 @@ export const typeDefs = gql`
     success: Boolean!
     message: String!
     token: String
+  }
+
+  type CreateFollowResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    follow : Follow
+  }
+
+  type Follow{
+    following : String!
+    follower: String!
   }
 
 
@@ -69,5 +82,7 @@ export const typeDefs = gql`
     surname: String!
     email: String!
     bio:String
+    followers: [Users]
+    following: [Users]
   }
 `;
