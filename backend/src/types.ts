@@ -18,6 +18,14 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type CreateFollowResponse = {
+  __typename?: 'CreateFollowResponse';
+  code: Scalars['Int']['output'];
+  follow?: Maybe<Follow>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type CreateUserResponse = {
   __typename?: 'CreateUserResponse';
   code: Scalars['Int']['output'];
@@ -33,6 +41,12 @@ export type Film = {
   title?: Maybe<Scalars['String']['output']>;
 };
 
+export type Follow = {
+  __typename?: 'Follow';
+  follower: Scalars['String']['output'];
+  following: Scalars['String']['output'];
+};
+
 export type GetUsersResponse = {
   __typename?: 'GetUsersResponse';
   code: Scalars['Int']['output'];
@@ -43,8 +57,15 @@ export type GetUsersResponse = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createFollow?: Maybe<CreateFollowResponse>;
   createUser?: Maybe<CreateUserResponse>;
   signIn?: Maybe<SigninResponse>;
+};
+
+
+export type MutationCreateFollowArgs = {
+  follower: Scalars['String']['input'];
+  following: Scalars['String']['input'];
 };
 
 
@@ -188,8 +209,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  CreateFollowResponse: ResolverTypeWrapper<CreateFollowResponse>;
   CreateUserResponse: ResolverTypeWrapper<CreateUserResponse>;
   Film: ResolverTypeWrapper<FilmModel>;
+  Follow: ResolverTypeWrapper<Follow>;
   GetUsersResponse: ResolverTypeWrapper<GetUsersResponse>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
@@ -206,8 +229,10 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
+  CreateFollowResponse: CreateFollowResponse;
   CreateUserResponse: CreateUserResponse;
   Film: FilmModel;
+  Follow: Follow;
   GetUsersResponse: GetUsersResponse;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
@@ -219,6 +244,14 @@ export type ResolversParentTypes = {
   String: Scalars['String']['output'];
   User: User;
   Users: Users;
+};
+
+export type CreateFollowResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateFollowResponse'] = ResolversParentTypes['CreateFollowResponse']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  follow?: Resolver<Maybe<ResolversTypes['Follow']>, ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type CreateUserResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateUserResponse'] = ResolversParentTypes['CreateUserResponse']> = {
@@ -236,6 +269,12 @@ export type FilmResolvers<ContextType = Context, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type FollowResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Follow'] = ResolversParentTypes['Follow']> = {
+  follower?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  following?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type GetUsersResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GetUsersResponse'] = ResolversParentTypes['GetUsersResponse']> = {
   code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -245,6 +284,7 @@ export type GetUsersResponseResolvers<ContextType = Context, ParentType extends 
 };
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createFollow?: Resolver<Maybe<ResolversTypes['CreateFollowResponse']>, ParentType, ContextType, RequireFields<MutationCreateFollowArgs, 'follower' | 'following'>>;
   createUser?: Resolver<Maybe<ResolversTypes['CreateUserResponse']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'email' | 'name' | 'password' | 'surname' | 'username'>>;
   signIn?: Resolver<Maybe<ResolversTypes['SigninResponse']>, ParentType, ContextType, RequireFields<MutationSignInArgs, 'password' | 'username'>>;
 };
@@ -297,8 +337,10 @@ export type UsersResolvers<ContextType = Context, ParentType extends ResolversPa
 };
 
 export type Resolvers<ContextType = Context> = {
+  CreateFollowResponse?: CreateFollowResponseResolvers<ContextType>;
   CreateUserResponse?: CreateUserResponseResolvers<ContextType>;
   Film?: FilmResolvers<ContextType>;
+  Follow?: FollowResolvers<ContextType>;
   GetUsersResponse?: GetUsersResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   People?: PeopleResolvers<ContextType>;
