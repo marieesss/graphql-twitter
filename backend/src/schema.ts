@@ -82,5 +82,7 @@ export const typeDefs = gql`
     surname: String!
     email: String!
     bio:String
+    followers: [Users]
+    following: [Users]
   }
 `;
