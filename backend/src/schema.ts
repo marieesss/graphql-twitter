@@ -4,7 +4,7 @@ export const typeDefs = gql`
   type Query {
     getFilms: [Film]!
     getPeople: [People]!
-    getUsers: [Users]!
+    getUsers(userId: ID): GetUsersResponse
   }
 
   type Mutation {
@@ -38,6 +38,15 @@ export const typeDefs = gql`
     message: String!
     token: String
   }
+
+
+  type GetUsersResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    users: [Users]
+  }
+ 
  
   type User {
     id: ID!
@@ -60,8 +69,5 @@ export const typeDefs = gql`
     surname: String!
     email: String!
     bio:String
-    Followers : [Users]!
-    Following: [Users]!
-    Posts:[Posts]!
   }
 `;
