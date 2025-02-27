@@ -1,4 +1,3 @@
-import { hashPassword } from "../../modules/auth.js";
 import { MutationResolvers } from "../../types.js";
 
 export const createComment: NonNullable<MutationResolvers['createComment']> = async (
