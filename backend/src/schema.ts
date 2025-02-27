@@ -44,6 +44,7 @@ export const typeDefs = gql`
     success: Boolean!
     message: String!
     token: String
+    id : String
   }
 
   type CreateFollowResponse {

@@ -33,7 +33,8 @@ export const signIn: NonNullable<MutationResolvers['signIn']> = async (_, {usern
       code: 200,
       message: 'the user is logged',
       success: true,
-      token :token
+      token :token,
+      id : user?.id
     }
   } catch (e) {
     return {
