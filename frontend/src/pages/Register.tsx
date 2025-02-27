@@ -44,7 +44,6 @@ const Register: React.FC = () => {
   const [createUser, { loading }] = useMutation(CREATE_USER_MUTATION, {
     onCompleted: (data) => {
       if (data.createUser.success) {
-        // Si inscription réussie, redirige vers la page de connexion
         navigate('/login');
       } else {
         setErrorMsg(data.createUser.message);
@@ -64,7 +63,15 @@ const Register: React.FC = () => {
 
   return (
     <Container maxWidth="sm">
-      <Box mt={8} p={4} boxShadow={3}>
+      <Box
+        mt={8}
+        p={4}
+        sx={{
+          boxShadow: 3,
+          borderRadius: '12px',
+          backgroundColor: '#fff'
+        }}
+      >
         <Typography variant="h4" component="h1" align="center" gutterBottom>
           Inscription
         </Typography>
@@ -128,7 +135,13 @@ const Register: React.FC = () => {
           />
           {errorMsg && <Typography color="error">{errorMsg}</Typography>}
           <Box mt={2}>
-            <Button type="submit" variant="contained" color="primary" fullWidth disabled={loading}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={loading}
+            >
               S'inscrire
             </Button>
           </Box>

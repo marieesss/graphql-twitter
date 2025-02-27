@@ -9,7 +9,7 @@ import {
   CircularProgress,
   Box
 } from '@mui/material';
-import { Navigate, useParams } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
 const GET_USER_PROFILE = gql`
@@ -74,14 +74,24 @@ const Profile: React.FC = () => {
     <>
       <Navbar />
       <Container maxWidth="md" sx={{ mt: 8 }}>
-        <Box mb={4}>
+        <Box
+          mb={4}
+          sx={{
+            p: 3,
+            boxShadow: 3,
+            borderRadius: '12px',
+            backgroundColor: '#fff'
+          }}
+        >
           <Typography variant="h4" gutterBottom>
             Profil de {user.username}
           </Typography>
           <Typography variant="body1">
             Nom : {user.name} {user.surname}
           </Typography>
-          <Typography variant="body1">Email : {user.email}</Typography>
+          <Typography variant="body1">
+            Email : {user.email}
+          </Typography>
           {user.bio && <Typography variant="body1">Bio : {user.bio}</Typography>}
         </Box>
         <Typography variant="h5" gutterBottom>
@@ -89,7 +99,7 @@ const Profile: React.FC = () => {
         </Typography>
         {sortedPosts.length > 0 ? (
           sortedPosts.map((post: any) => (
-            <Card key={post.id} sx={{ mb: 2 }}>
+            <Card key={post.id} sx={{ mb: 2, borderRadius: '12px' }}>
               {post.image && (
                 <CardMedia
                   component="img"

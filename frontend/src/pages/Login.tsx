@@ -27,7 +27,6 @@ const Login: React.FC = () => {
         localStorage.setItem('token', data.signIn.token);
         localStorage.setItem('userId', data.signIn.id);     
         localStorage.setItem('username', username);
-        
         navigate('/home');
       } else {
         setErrorMsg(data.signIn.message);
@@ -45,7 +44,15 @@ const Login: React.FC = () => {
 
   return (
     <Container maxWidth="sm">
-      <Box mt={8} p={4} boxShadow={3}>
+      <Box
+        mt={8}
+        p={4}
+        sx={{
+          boxShadow: 3,
+          borderRadius: '12px',
+          backgroundColor: '#fff'
+        }}
+      >
         <Typography variant="h4" component="h1" align="center" gutterBottom>
           Connexion
         </Typography>
@@ -71,7 +78,13 @@ const Login: React.FC = () => {
           />
           {errorMsg && <Typography color="error">{errorMsg}</Typography>}
           <Box mt={2}>
-            <Button type="submit" variant="contained" color="primary" fullWidth disabled={loading}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={loading}
+            >
               Se connecter
             </Button>
           </Box>
