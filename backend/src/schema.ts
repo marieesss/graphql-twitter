@@ -19,6 +19,9 @@ export const typeDefs = gql`
     updateComment(comId: ID!, text: String! ): GetCommentsResponse
     deleteComment(comId: ID!): DeleteResponse
     createFollow(following: String!): CreateFollowResponse
+    createLike(postId: ID, commentId: ID): CreateLikeResponse
+    deleteLike(postId: ID, commentId: ID): DeleteResponse
+
     deleteFollowing(following: String!): DeleteResponse
     deleteFollower(follower: String!): DeleteResponse
   }
@@ -70,7 +73,6 @@ export const typeDefs = gql`
     message: String!
     users: [Users]
   }
-
     type DeleteResponse {
     code: Int!
     success: Boolean!
@@ -93,6 +95,7 @@ export const typeDefs = gql`
     date_create : String!
     date_update : String
     comment : [Comments]
+    likes : [Like]
   }
 
 
@@ -144,5 +147,22 @@ export const typeDefs = gql`
     success: Boolean!
     message: String!
     comments: [Comments]
+  }
+
+
+  type CreateLikeResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    like : Like
+  }
+
+    type Like{
+    id: ID!
+    userId : String!
+    postId: String
+    commentId : String
+    date_create:String
+    user : Users
   }
 `;

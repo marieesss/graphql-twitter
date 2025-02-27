@@ -1,5 +1,5 @@
 import { QueryResolvers, Resolvers } from "../../types.js";
-import { WithRequired } from "../../utils/mapped-types";
+import { WithRequired } from "../../utils/mapped-types.js";
 
 type PostsQueries = WithRequired<QueryResolvers, 'getPosts'>;
 
@@ -13,7 +13,7 @@ export const PostsQueries: PostsQueries = {
           ...post,
           date_create: post.date_create ? post.date_create.toISOString() : '',
           date_update: post.date_update ? post.date_update.toISOString() : ''
-        } : null;
+        } :  null;
 
         return {
           code: 200,
@@ -27,7 +27,7 @@ export const PostsQueries: PostsQueries = {
         const formattedPosts = posts.map(post => ({
           ...post,
           date_create: post.date_create.toISOString(),
-          date_update: post.date_update.toISOString()
+          date_update: post.date_update.toISOString() 
         }));
         return {
           code: 200,
@@ -47,7 +47,7 @@ export const PostsQueries: PostsQueries = {
   }
 };
 
-export const PostsResolvers: Resolvers['Posts'] = {
+export const LikesResolvers: Resolvers['Like'] = {
   user: async (parent, _, {dataSources :{db}}) =>{
       try {
         const res = await db.user.findFirst({ where : { id : parent.userId }})
@@ -59,41 +59,5 @@ export const PostsResolvers: Resolvers['Posts'] = {
         throw error
       }
 
-    },
-  comment: async (parent, _, { dataSources: { db } }) => {
-    try {
-      const res = await db.comment.findMany({
-         where: { postId: parent.id },
-         include: { user: true }
-        })
-      if(!res) {
-        throw new Error(`Comment not found for post ${parent.id}`);
-      }
-
-      const formattedComments = res.map(com => ({
-        ...com,
-        date_create: com.date_create.toISOString(),
-        date_update: com.date_update.toISOString()
-      }));
-      return formattedComments
-    } catch (error) {
-      throw error
     }
-  }, 
-  likes: async (parent, _, {dataSources :{db}}) =>{
-      try {
-        const res = await db.like.findMany({where :{postId : parent.id}})
-        if (!res) {
-          throw new Error(`User not found for post ${parent.id}`);
-        }
-        const formattedLikes = res.map(like => ({
-          ...like,
-          date_create: like.date_create.toISOString(),
-        }));
-        return formattedLikes
-      } catch (error) {
-        throw error
-      } 
-     },
-
   }

@@ -9,6 +9,8 @@ import { Resolvers } from "./types.js";
 import { CommentsQueries } from "./domain/commentaire/queries.js";
 import { commentMutations } from "./domain/commentaire/mutation.js";
 
+import { LikeMutations } from "./domain/likes/mutations.js";
+import { LikesResolvers } from "./domain/likes/queries.js";
 export const resolvers: Resolvers = {
   Query: {
     ...ghibliQueries,
@@ -20,10 +22,12 @@ export const resolvers: Resolvers = {
     ...userMutations,
     ...followMutations,
     ...postMutations,
-    ...commentMutations
+    ...commentMutations, 
+    ...LikeMutations
   },
   Film: FilmResolver,
   People: PeopleResolver,
   Users: UserResolvers, 
-  Posts : PostsResolvers
+  Posts : PostsResolvers, 
+  Like : LikesResolvers
 }
