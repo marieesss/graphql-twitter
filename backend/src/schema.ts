@@ -14,10 +14,10 @@ export const typeDefs = gql`
     signIn(username: String!, password: String!): SigninResponse
     createPost(text: String!, image: String ): PostsResponse
     updatePost(postId: ID!, text: String!, image: String ): PostsResponse
-    deletePost(postId: ID!): DeletePostsResponse
+    deletePost(postId: ID!): DeleteResponse
     createComment(text: String!, postId: ID! ): GetCommentsResponse
     updateComment(comId: ID!, text: String! ): GetCommentsResponse
-    deleteComment(comId: ID!): GetCommentsResponse
+    deleteComment(comId: ID!): DeleteResponse
     createFollow(following: String!): CreateFollowResponse
     deleteFollowing(following: String!): DeleteResponse
     deleteFollower(follower: String!): DeleteResponse

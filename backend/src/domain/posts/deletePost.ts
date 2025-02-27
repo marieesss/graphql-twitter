@@ -18,8 +18,7 @@ export const deletePost: NonNullable<MutationResolvers['deletePost']> = async (
     return {
       code: 404,
       message: "Post not found",
-      success: false,
-      post: null
+      success: false
     };
   }
 
@@ -28,8 +27,7 @@ export const deletePost: NonNullable<MutationResolvers['deletePost']> = async (
     return {
       code: 401,
       message: 'Forbidden',
-      success: false,
-      post: null
+      success: false
     };
   }
 
@@ -41,6 +39,6 @@ export const deletePost: NonNullable<MutationResolvers['deletePost']> = async (
   return {
     code: 200,
     message: "Post deleted",
-    success: true,
+    success: true
   };
 };

@@ -18,8 +18,7 @@ export const deleteComment: NonNullable<MutationResolvers['deleteComment']> = as
         return {
             code: 404,
             message: "Comment not found",
-            success: false,
-            comments: null
+            success: false
         };
     }
     // Ensure that only the owner (or an admin) can delete the post.
@@ -27,8 +26,7 @@ export const deleteComment: NonNullable<MutationResolvers['deleteComment']> = as
         return {
             code: 401,
             message: 'Forbidden',
-            success: false,
-            comments: null
+            success: false
         };
     }
 
@@ -40,8 +38,7 @@ export const deleteComment: NonNullable<MutationResolvers['deleteComment']> = as
     return {
         code: 200,
         message: "Comment deleted",
-        success: true,
-        comments: null
+        success: true
     };
 
 
