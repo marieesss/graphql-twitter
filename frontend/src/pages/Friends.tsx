@@ -4,25 +4,43 @@ import { gql } from "graphql-tag";
 import { Button, TextField, Box, Typography, Card, CardContent } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
+// Requête GraphQL pour récupérer tous les utilisateurs
 const GET_USERS = gql`
-  query GetUsers($userId: ID) {
-    getUsers(userId: $userId) {
+  query Users {
+    getUsers {
       users {
-        username
+        email
         id
+        name
+        surname
+        username
         following {
-          username
           id
-        }
-        followers {
           username
-          id
         }
       }
     }
   }
 `;
 
+// Requête GraphQL pour récupérer les utilisateurs suivis (amis) de l'utilisateur courant
+const GET_USER_FRIENDS = gql`
+  query GetUsers($userId: ID) {
+    getUsers(userId: $userId) {
+      users {
+        name
+        following {
+          id
+          username
+          name
+          surname
+        }
+      }
+    }
+  }
+`;
+
+// Mutation pour suivre un utilisateur
 const CREATE_FOLLOW = gql`
   mutation CreateFollow($following: String!) {
     createFollow(following: $following) {
@@ -37,6 +55,7 @@ const CREATE_FOLLOW = gql`
   }
 `;
 
+// Mutation pour unfollow un utilisateur
 const DELETE_FOLLOWING = gql`
   mutation DeleteFollowing($following: ID!) {
     deleteFollowing(following: $following) {
@@ -50,23 +69,36 @@ const DELETE_FOLLOWING = gql`
 interface User {
   id: string;
   username: string;
-  following: { id: string; username: string }[];
-  followers: { id: string; username: string }[];
+  email: string;
+  name: string;
+  surname: string;
+  following: { id: string; username: string }[]; // Liste des utilisateurs suivis
 }
 
 const Friends: React.FC = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
+  const userId = localStorage.getItem("userId");  // <-- on récupère l'id stocké
   const [search, setSearch] = useState<string>("");
 
+  // Si pas de token → redirection
   useEffect(() => {
     if (!token) {
       navigate("/login");
     }
   }, [token, navigate]);
 
-  const { loading, error, data, refetch } = useQuery<{ getUsers: { users: User[] } }>(GET_USERS, {
+  // Récupération de tous les utilisateurs
+  const { loading: loadingUsers, error: errorUsers, data: dataUsers } = useQuery<{ getUsers: { users: User[] } }>(GET_USERS, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
+
+  // Récupération des utilisateurs suivis (amis)
+  const { loading: loadingFriends, error: errorFriends, data: dataFriends } = useQuery<{ getUsers: { users: User[] } }>(GET_USER_FRIENDS, {
     variables: { userId },
     context: {
       headers: {
@@ -75,36 +107,59 @@ const Friends: React.FC = () => {
     },
   });
 
+  // Mutation follow
   const [createFollow] = useMutation(CREATE_FOLLOW, {
     context: {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     },
-    onCompleted: () => refetch(),
     onError: (error) => console.error("Error in follow:", error),
   });
-  
+
+  // Mutation unfollow
   const [deleteFollowing] = useMutation(DELETE_FOLLOWING, {
     context: {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     },
-    onCompleted: () => refetch(),
+    onCompleted: () => {
+      // Optionnel : Mettre à jour les données après l'action de suppression si nécessaire
+    },
     onError: (error) => console.error("Error in unfollow:", error),
   });
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  // Gestion loading / error
+  if (loadingUsers || loadingFriends) return <p>Loading...</p>;
+  if (errorUsers || errorFriends) return <p>Error: {errorUsers?.message || errorFriends?.message}</p>;
 
-  const users = data?.getUsers?.users || [];
-  const filteredUsers = users.filter((user) => user.username.toLowerCase().includes(search.toLowerCase()));
-  const friends = users.filter((user) => user.following.some((f) => f.id === userId));
+  // Récupérer tous les utilisateurs et leurs informations
+  const users = dataUsers?.getUsers?.users || [];
+
+  // Filtrer les utilisateurs pour la recherche
+  const filteredUsers = users.filter(
+    (u) => u.username.toLowerCase().includes(search.toLowerCase()) && u.id !== userId // Exclure l'utilisateur actuel
+  );
+
+  // Récupérer les amis de l'utilisateur courant
+  const friends = dataFriends?.getUsers?.users[0]?.following || [];
+
+  // Fonction pour suivre un utilisateur
+  const handleFollow = (userId: string) => {
+    createFollow({ variables: { following: userId } });
+  };
+
+  // Fonction pour supprimer un suivi
+  const handleUnfollow = (userId: string) => {
+    deleteFollowing({ variables: { following: userId } });
+  };
 
   return (
     <Box p={4}>
-      <Typography variant="h4" gutterBottom>Friends</Typography>
+      <Typography variant="h4" gutterBottom>
+        Friends
+      </Typography>
       <TextField
         label="Search users..."
         variant="outlined"
@@ -113,11 +168,13 @@ const Friends: React.FC = () => {
         onChange={(e) => setSearch(e.target.value)}
         margin="normal"
       />
-      
-      <Typography variant="h5" mt={2}>All Users</Typography>
+
+      <Typography variant="h5" mt={2}>
+        All Users
+      </Typography>
       <Box display="flex" flexWrap="wrap" gap={2}>
         {filteredUsers.map((user) => {
-          const alreadyFollowing = user.following.some((f) => f.id === userId);
+          const alreadyFollowing = friends.some((f) => f.id === user.id); // Vérifier si l'utilisateur est déjà suivi
           return (
             <Card key={user.id} sx={{ width: 250 }}>
               <CardContent>
@@ -125,10 +182,10 @@ const Friends: React.FC = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  disabled={alreadyFollowing}
+                  disabled={alreadyFollowing} // Griser le bouton si déjà suivi
                   onClick={() => {
                     if (!alreadyFollowing) {
-                      createFollow({ variables: { following: user.id } });
+                      handleFollow(user.id); // Suivre l'utilisateur
                     }
                   }}
                 >
@@ -140,7 +197,9 @@ const Friends: React.FC = () => {
         })}
       </Box>
 
-      <Typography variant="h5" mt={4}>Your Friends</Typography>
+      <Typography variant="h5" mt={4}>
+        Your Friends
+      </Typography>
       <Box display="flex" flexWrap="wrap" gap={2}>
         {friends.map((friend) => (
           <Card key={friend.id} sx={{ width: 250 }}>
@@ -149,7 +208,7 @@ const Friends: React.FC = () => {
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={() => deleteFollowing({ variables: { following: friend.id } })}
+                onClick={() => handleUnfollow(friend.id)} // Supprimer un ami
               >
                 Remove Friend
               </Button>
