@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import Friends from './pages/Friends'
 import CreatePost from './pages/CreatePost';
 import EditPost from './pages/EditPost';
 import Profile from './pages/Profile';
@@ -51,6 +52,7 @@ const App: React.FC = () => {
       />
 
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/friends" element={<Friends/>} />
     </Routes>
   );
 };

@@ -25,7 +25,7 @@ const Login: React.FC = () => {
     onCompleted: (data) => {
       if (data.signIn.success) {
         localStorage.setItem('token', data.signIn.token);
-        localStorage.setItem('userId', data.signIn.id);
+        localStorage.setItem('userId', data.signIn.id);     
         localStorage.setItem('username', username);
         
         navigate('/home');
