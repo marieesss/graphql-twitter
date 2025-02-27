@@ -7,7 +7,9 @@ export const deletePost: NonNullable<MutationResolvers['deletePost']> = async (
 ) => {
   // Retrieve the post with its user relation.
   const postToDelete = await db.post.findFirst({
-    where: { id: postId },
+    where: { 
+      id: postId
+     },
     include: { user: true }
   });
 

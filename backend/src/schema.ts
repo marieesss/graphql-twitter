@@ -6,14 +6,18 @@ export const typeDefs = gql`
     getPeople: [People]!
     getUsers(userId: ID): GetUsersResponse
     getPosts(postId: ID): GetPostsResponse
+    getComments(comId: ID): GetCommentsResponse
   }
 
   type Mutation {
     createUser(username: String!, password: String!, email : String!, name: String!, surname : String!, bio : String): CreateUserResponse
     signIn(username: String!, password: String!): SigninResponse
-    createPost(text: String!, userId: ID!, image: String ): PostsResponse
+    createPost(text: String!, image: String ): PostsResponse
     updatePost(postId: ID!, text: String!, image: String ): PostsResponse
     deletePost(postId: ID!): DeletePostsResponse
+    createComment(text: String!, postId: ID! ): GetCommentsResponse
+    updateComment(comId: ID!, text: String! ): GetCommentsResponse
+    deleteComment(comId: ID!): GetCommentsResponse
     createFollow(following: String!): CreateFollowResponse
     createLike(postId: ID, commentId: ID): CreateLikeResponse
     deleteLike(postId: ID, commentId: ID): DeleteResponse
@@ -47,6 +51,7 @@ export const typeDefs = gql`
     success: Boolean!
     message: String!
     token: String
+    id : String
   }
 
   type CreateFollowResponse {
@@ -88,7 +93,8 @@ export const typeDefs = gql`
     userId : ID!
     image : String
     date_create : String!
-    date_update:String
+    date_update : String
+    comment : [Comments]
     likes : [Like]
   }
 
@@ -125,6 +131,22 @@ export const typeDefs = gql`
     followers: [Users]
     following: [Users]
     posts: [Posts]
+  }
+
+  type Comments{
+    id: ID!
+    user : Users
+    userId : ID!
+    text: String!
+    date_create : String!
+    date_update : String
+  }
+
+  type GetCommentsResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    comments: [Comments]
   }
 
 

@@ -13,7 +13,7 @@ export const PostsQueries: PostsQueries = {
           ...post,
           date_create: post.date_create ? post.date_create.toISOString() : '',
           date_update: post.date_update ? post.date_update.toISOString() : ''
-        } :  null;
+        } : null;
 
         return {
           code: 200,
@@ -27,7 +27,7 @@ export const PostsQueries: PostsQueries = {
         const formattedPosts = posts.map(post => ({
           ...post,
           date_create: post.date_create.toISOString(),
-          date_update: post.date_update.toISOString() 
+          date_update: post.date_update.toISOString()
         }));
         return {
           code: 200,
@@ -57,8 +57,29 @@ export const PostsResolvers: Resolvers['Posts'] = {
         return res
       } catch (error) {
         throw error
-      } 
-     },
+      }
+
+    },
+  comment: async (parent, _, { dataSources: { db } }) => {
+    try {
+      const res = await db.comment.findMany({
+         where: { postId: parent.id },
+         include: { user: true }
+        })
+      if(!res) {
+        throw new Error(`Comment not found for post ${parent.id}`);
+      }
+
+      const formattedComments = res.map(com => ({
+        ...com,
+        date_create: com.date_create.toISOString(),
+        date_update: com.date_update.toISOString()
+      }));
+      return formattedComments
+    } catch (error) {
+      throw error
+    }
+  }, 
   likes: async (parent, _, {dataSources :{db}}) =>{
       try {
         const res = await db.like.findMany({where :{postId : parent.id}})
@@ -74,4 +95,5 @@ export const PostsResolvers: Resolvers['Posts'] = {
         throw error
       } 
      },
+
   }
