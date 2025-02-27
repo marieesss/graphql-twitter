@@ -51,6 +51,13 @@ export type DeletePostsResponse = {
   success: Scalars['Boolean']['output'];
 };
 
+export type DeleteResponse = {
+  __typename?: 'DeleteResponse';
+  code: Scalars['Int']['output'];
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type Film = {
   __typename?: 'Film';
   id?: Maybe<Scalars['ID']['output']>;
@@ -94,7 +101,8 @@ export type Mutation = {
   createFollow?: Maybe<CreateFollowResponse>;
   createPost?: Maybe<PostsResponse>;
   createUser?: Maybe<CreateUserResponse>;
-  deleteComment?: Maybe<GetCommentsResponse>;
+  deleteFollower?: Maybe<DeleteResponse>;
+  deleteFollowing?: Maybe<DeleteResponse>;
   deletePost?: Maybe<DeletePostsResponse>;
   signIn?: Maybe<SigninResponse>;
   updateComment?: Maybe<GetCommentsResponse>;
@@ -109,7 +117,6 @@ export type MutationCreateCommentArgs = {
 
 
 export type MutationCreateFollowArgs = {
-  follower: Scalars['String']['input'];
   following: Scalars['String']['input'];
 };
 
@@ -213,6 +220,7 @@ export type QueryGetUsersArgs = {
 export type SigninResponse = {
   __typename?: 'SigninResponse';
   code: Scalars['Int']['output'];
+  id?: Maybe<Scalars['String']['output']>;
   message: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
   token?: Maybe<Scalars['String']['output']>;
@@ -313,6 +321,7 @@ export type ResolversTypes = {
   CreateFollowResponse: ResolverTypeWrapper<CreateFollowResponse>;
   CreateUserResponse: ResolverTypeWrapper<CreateUserResponse>;
   DeletePostsResponse: ResolverTypeWrapper<DeletePostsResponse>;
+  DeleteResponse: ResolverTypeWrapper<DeleteResponse>;
   Film: ResolverTypeWrapper<FilmModel>;
   Follow: ResolverTypeWrapper<Follow>;
   GetCommentsResponse: ResolverTypeWrapper<GetCommentsResponse>;
@@ -338,6 +347,7 @@ export type ResolversParentTypes = {
   CreateFollowResponse: CreateFollowResponse;
   CreateUserResponse: CreateUserResponse;
   DeletePostsResponse: DeletePostsResponse;
+  DeleteResponse: DeleteResponse;
   Film: FilmModel;
   Follow: Follow;
   GetCommentsResponse: GetCommentsResponse;
@@ -383,6 +393,13 @@ export type CreateUserResponseResolvers<ContextType = Context, ParentType extend
 };
 
 export type DeletePostsResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeletePostsResponse'] = ResolversParentTypes['DeletePostsResponse']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type DeleteResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeleteResponse'] = ResolversParentTypes['DeleteResponse']> = {
   code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -476,6 +493,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
 
 export type SigninResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SigninResponse'] = ResolversParentTypes['SigninResponse']> = {
   code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -506,6 +524,7 @@ export type Resolvers<ContextType = Context> = {
   CreateFollowResponse?: CreateFollowResponseResolvers<ContextType>;
   CreateUserResponse?: CreateUserResponseResolvers<ContextType>;
   DeletePostsResponse?: DeletePostsResponseResolvers<ContextType>;
+  DeleteResponse?: DeleteResponseResolvers<ContextType>;
   Film?: FilmResolvers<ContextType>;
   Follow?: FollowResolvers<ContextType>;
   GetCommentsResponse?: GetCommentsResponseResolvers<ContextType>;

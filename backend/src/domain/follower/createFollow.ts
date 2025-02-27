@@ -1,6 +1,6 @@
 import { MutationResolvers } from "../../types.js";
 
-export const createFollow: NonNullable<MutationResolvers['createFollow']> = async (_, {follower, following}, {dataSources: {db}, user}) => {
+export const createFollow: NonNullable<MutationResolvers['createFollow']> = async (_, {following}, {dataSources: {db}, user}) => {
   try {
     // Protected route
     if(!user){
@@ -16,7 +16,7 @@ export const createFollow: NonNullable<MutationResolvers['createFollow']> = asyn
     const existingFollow = await db.followers.findFirst({
         where: {
           AND: [
-            { followerId: follower },
+            { followerId: user.id },
             { followingId: following }
           ]
         }
@@ -33,7 +33,7 @@ export const createFollow: NonNullable<MutationResolvers['createFollow']> = asyn
     
     // Verify if follower and following exists
     // Verify follower has same username as the one using token
-    const existingFollower = await db.user.findUnique({where :{id : follower}})
+    const existingFollower = await db.user.findUnique({where :{id : user.id}})
 
     const existingFollowing = await db.user.findUnique({where : {id : following }})
 
@@ -47,7 +47,6 @@ export const createFollow: NonNullable<MutationResolvers['createFollow']> = asyn
       
     }
 
-  if (existingFollower?.id && existingFollowing?.id) {
       const createdFollow = await db.followers.create({
         data : {
           followerId : existingFollower.id, 
@@ -67,16 +66,6 @@ export const createFollow: NonNullable<MutationResolvers['createFollow']> = asyn
         }
       }
 
-  }
-
-
-   
-    return {
-      code: 201,
-      message: 'the follow has been created',
-      success: true,
-      follow: null
-    }
   } catch {
     return {
       code: 400,

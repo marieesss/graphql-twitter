@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "tsc",
-    "start": "npm run compile && node ./dist/index.js",
+    "start": "npm run compile && node ./dist/src/index.js",
     "dev": "node --import ./scripts/register.js --watch src/index.ts",
     "codegen": "graphql-codegen",
     "prisma": "prisma"
@@ -20,6 +20,9 @@
     "@apollo/server": "^4.11.3",
     "@prisma/client": "^6.4.1",
     "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
+    "bcryptjs": "^3.0.2",
+    "first-graphql-server": "file:",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
     "jsonwebtoken": "^9.0.2"
