@@ -29,7 +29,7 @@ export type CreateFollowResponse = {
 export type CreateLikeResponse = {
   __typename?: 'CreateLikeResponse';
   code: Scalars['Int']['output'];
-  like: Like;
+  like?: Maybe<Like>;
   message: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
 };
@@ -374,7 +374,7 @@ export type CreateFollowResponseResolvers<ContextType = Context, ParentType exte
 
 export type CreateLikeResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateLikeResponse'] = ResolversParentTypes['CreateLikeResponse']> = {
   code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  like?: Resolver<ResolversTypes['Like'], ParentType, ContextType>;
+  like?: Resolver<Maybe<ResolversTypes['Like']>, ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

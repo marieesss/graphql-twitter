@@ -132,7 +132,7 @@ export const typeDefs = gql`
     code: Int!
     success: Boolean!
     message: String!
-    like : Like!
+    like : Like
   }
 
     type Like{
