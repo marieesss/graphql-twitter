@@ -1,9 +1,45 @@
 import React from 'react';
-import { Container, Typography } from '@mui/material';
+import { useQuery, gql } from '@apollo/client';
+import { 
+  Container, 
+  Typography, 
+  Card, 
+  CardContent, 
+  CardMedia, 
+  CircularProgress 
+} from '@mui/material';
 import Navbar from '../components/Navbar';
+
+const GET_POSTS = gql`
+  query GetPosts {
+    getPosts {
+      code
+      success
+      message
+      post {
+        id
+        text
+        image
+        date_create
+        user {
+          username
+        }
+      }
+    }
+  }
+`;
 
 const Home: React.FC = () => {
   const username = localStorage.getItem('username') || 'Utilisateur';
+  const { loading, error, data } = useQuery(GET_POSTS);
+
+  if (loading) return <CircularProgress />;
+  if (error) return <Typography variant="body1">Erreur : {error.message}</Typography>;
+
+  // Tri des posts du plus récent au plus ancien selon la date de création
+  const posts = data.getPosts.post.slice().sort(
+    (a: any, b: any) => new Date(b.date_create).getTime() - new Date(a.date_create).getTime()
+  );
 
   return (
     <>
@@ -17,47 +53,29 @@ const Home: React.FC = () => {
         </Typography>
 
         <Typography variant="h5" gutterBottom>
-          L'endroit où le monde se connecte et partage en temps réel.
+          Derniers posts
         </Typography>
 
-        <Typography variant="body1" paragraph>
-          Twitter est une plateforme sociale conçue pour permettre aux utilisateurs de partager des idées, des actualités et 
-          des discussions en temps réel. Que vous soyez ici pour suivre l'actualité, interagir avec des experts ou simplement 
-          partager vos pensées, Twitter vous permet de rester informé et connecté avec le monde entier.
-        </Typography>
-
-        <Typography variant="body1" paragraph>
-          Grâce à un système de publications rapides et concises, Twitter est devenu un acteur majeur dans la communication 
-          digitale, utilisé par des millions de personnes, des entreprises et des organisations dans le monde entier.
-        </Typography>
-
-        <Typography variant="h5" gutterBottom>
-          🌍 Rejoignez la conversation.
-        </Typography>
-
-        <Typography variant="body1" paragraph>
-          Suivez vos centres d'intérêt, échangez avec d'autres utilisateurs et faites entendre votre voix sur les sujets qui 
-          vous passionnent. Twitter est un espace de dialogue où chaque publication peut avoir un impact.
-        </Typography>
-
-        <Typography variant="h5" gutterBottom>
-          ⚡ Fonctionnalités clés :
-        </Typography>
-
-        <Typography variant="body1" paragraph>
-          - Publiez et interagissez avec des tweets en temps réel.  
-          - Suivez les dernières tendances et découvrez du contenu pertinent.  
-          - Personnalisez votre fil d’actualité selon vos préférences.  
-          - Connectez-vous avec des millions d'utilisateurs à travers le monde.
-        </Typography>
-
-        <Typography variant="h5" gutterBottom>
-          🚀 Lancez-vous !
-        </Typography>
-
-        <Typography variant="body1">
-          Inscrivez-vous, explorez et commencez à partager vos pensées avec la communauté Twitter.
-        </Typography>
+        {posts.map((post: any) => (
+          <Card key={post.id} sx={{ marginBottom: '20px' }}>
+            {post.image && (
+              <CardMedia
+                component="img"
+                height="200"
+                image={post.image}
+                alt="Image du post"
+              />
+            )}
+            <CardContent>
+              <Typography variant="subtitle1" color="textSecondary">
+                {post.user?.username || 'Inconnu'} - {new Date(post.date_create).toLocaleString()}
+              </Typography>
+              <Typography variant="body1">
+                {post.text}
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
       </Container>
     </>
   );
