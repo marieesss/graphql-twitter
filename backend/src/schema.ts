@@ -14,7 +14,7 @@ export const typeDefs = gql`
     createPost(text: String!, userId: ID!, image: String ): PostsResponse
     updatePost(postId: ID!, text: String!, image: String ): PostsResponse
     deletePost(postId: ID!): DeletePostsResponse
-    createFollow(follower: String!, following: String!): CreateFollowResponse
+    createFollow(following: String!): CreateFollowResponse
     deleteFollowing(following: String!): DeleteResponse
     deleteFollower(follower: String!): DeleteResponse
   }

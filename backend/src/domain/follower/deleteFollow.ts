@@ -11,11 +11,10 @@ export const deleteFollowing: NonNullable<MutationResolvers['deleteFollowing']> 
         }
       }
 
-      // Delete a row where the follower is the user of the request
-      await db.followers.delete({ where : { followerId_followingId: {
-        followerId: user.id,
-        followingId: following,
-      },}})
+
+      // Delete a row when you want to delete someone in your following
+      await db.followers.delete({ where : { followerId_followingId : {followerId : following, followingId : user.id}}})
+
 
       return {
         code: 200,
@@ -24,7 +23,7 @@ export const deleteFollowing: NonNullable<MutationResolvers['deleteFollowing']> 
       }
 
   
-  } catch {
+  } catch (err){
     return {
       code: 400,
       message: 'User has not been created',
@@ -47,10 +46,8 @@ export const deleteFollower: NonNullable<MutationResolvers['deleteFollower']> = 
       }
 
       // Delete a row where the follower is the user of the request
-      await db.followers.delete({ where : { followerId_followingId: {
-        followerId: follower,
-        followingId: user.id,
-      },}})
+      await db.followers.delete({ where : { followerId_followingId : {followerId : user.id, followingId : follower}}})
+
 
       return {
         code: 200,
@@ -59,7 +56,7 @@ export const deleteFollower: NonNullable<MutationResolvers['deleteFollower']> = 
       }
 
   
-  } catch {
+  } catch (err){
     return {
       code: 400,
       message: 'Follower has not been deleted',
