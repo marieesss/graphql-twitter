@@ -6,16 +6,21 @@ import { userMutations } from "./domain/user/mutations.js";
 import { followMutations } from "./domain/follower/mutations.js";
 import { UserResolvers, UsersQueries } from "./domain/user/queries.js";
 import { Resolvers } from "./types.js";
+import { CommentsQueries } from "./domain/commentaire/queries.js";
+import { commentMutations } from "./domain/commentaire/mutation.js";
+
 export const resolvers: Resolvers = {
   Query: {
     ...ghibliQueries,
     ...UsersQueries,
-    ...PostsQueries
+    ...PostsQueries,
+    ...CommentsQueries
   },
   Mutation: {
     ...userMutations,
     ...followMutations,
-    ...postMutations
+    ...postMutations,
+    ...commentMutations
   },
   Film: FilmResolver,
   People: PeopleResolver,

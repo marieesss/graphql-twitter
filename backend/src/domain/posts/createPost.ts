@@ -2,7 +2,7 @@ import { MutationResolvers } from "../../types.js";
 
 export const createPost: NonNullable<MutationResolvers['createPost']> = async (
   _, 
-  { text, image, userId }, 
+  { text, image }, 
   { dataSources: { db }, user }
 ) => {
   try {
@@ -22,7 +22,8 @@ export const createPost: NonNullable<MutationResolvers['createPost']> = async (
         text,
         image,
         date_update: new Date(),
-        user: { connect: { id: userId } }
+        date_create: new Date(),
+        user: { connect: { id: user.id } }
       },
       include: { user: true }
     });
