@@ -82,7 +82,8 @@ export const typeDefs = gql`
     userId : ID!
     image : String
     date_create : String!
-    date_update:String
+    date_update : String
+    comment : [Comments]
   }
 
 

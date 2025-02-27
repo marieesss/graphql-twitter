@@ -168,6 +168,7 @@ export type People = {
 
 export type Posts = {
   __typename?: 'Posts';
+  comment?: Maybe<Array<Maybe<Comments>>>;
   date_create: Scalars['String']['output'];
   date_update?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
@@ -446,6 +447,7 @@ export type PeopleResolvers<ContextType = Context, ParentType extends ResolversP
 };
 
 export type PostsResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Posts'] = ResolversParentTypes['Posts']> = {
+  comment?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comments']>>>, ParentType, ContextType>;
   date_create?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date_update?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
