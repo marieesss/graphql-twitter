@@ -10,6 +10,7 @@ const SIGNIN_MUTATION = gql`
       success
       message
       token
+      id
     }
   }
 `;
@@ -23,9 +24,10 @@ const Login: React.FC = () => {
   const [signIn, { loading }] = useMutation(SIGNIN_MUTATION, {
     onCompleted: (data) => {
       if (data.signIn.success) {
-        // Stocke le token et le username (pour affichage sur la page d'accueil)
         localStorage.setItem('token', data.signIn.token);
+        localStorage.setItem('userId', data.signIn.id);
         localStorage.setItem('username', username);
+        
         navigate('/home');
       } else {
         setErrorMsg(data.signIn.message);

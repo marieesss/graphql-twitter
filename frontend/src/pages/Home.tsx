@@ -1,19 +1,19 @@
 // src/pages/Home.tsx
 import React, { useState } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
-import { 
-  Container, 
-  Typography, 
-  Card, 
-  CardContent, 
-  CardMedia, 
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  CardMedia,
   CircularProgress,
   Button,
   Box,
   Alert,
   TextField
 } from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
 const GET_POSTS = gql`
@@ -321,7 +321,12 @@ const Home: React.FC = () => {
               )}
               <CardContent>
                 <Typography variant="subtitle1" color="textSecondary">
-                  {post.user?.username || 'Inconnu'} - {new Date(post.date_create).toLocaleString()}
+                  <Link
+                    to={`/profile/${post.user.id}`}
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    {post.user?.username || 'Inconnu'}
+                  </Link> - {new Date(post.date_create).toLocaleString()}
                 </Typography>
                 <Typography variant="body1">
                   {post.text}
