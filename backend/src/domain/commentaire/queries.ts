@@ -51,3 +51,24 @@ export const CommentsQueries: CommentsQueries = {
         }
     }
 }
+
+
+export const CommentsResolvers: Resolvers['Comments'] = {
+    likes: async (parent, _, {dataSources :{db}}) =>{
+        try {
+          const res = await db.like.findMany({where :{commentId : parent.id}})
+          if (!res) {
+            throw new Error(`User not found for post ${parent.id}`);
+          }
+          const formattedLikes = res.map(like => ({
+            ...like,
+            date_create: like.date_create.toISOString(),
+          }));
+          return formattedLikes
+        } catch (error) {
+          throw error
+        } 
+       },
+  
+    }
+  

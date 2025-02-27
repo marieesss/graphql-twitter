@@ -23,6 +23,7 @@ export type Comments = {
   date_create: Scalars['String']['output'];
   date_update?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  likes?: Maybe<Array<Maybe<Like>>>;
   text: Scalars['String']['output'];
   user?: Maybe<Users>;
   userId: Scalars['ID']['output'];
@@ -418,6 +419,7 @@ export type CommentsResolvers<ContextType = Context, ParentType extends Resolver
   date_create?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date_update?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  likes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Like']>>>, ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['Users']>, ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;

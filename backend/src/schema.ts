@@ -138,6 +138,7 @@ export const typeDefs = gql`
     user : Users
     userId : ID!
     text: String!
+    likes :[Like]
     date_create : String!
     date_update : String
   }
