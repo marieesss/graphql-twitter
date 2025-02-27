@@ -1,5 +1,5 @@
 import { MutationResolvers } from "../../types.js";
-import { WithRequired } from "../../utils/mapped-types";
+import { WithRequired } from "../../utils/mapped-types.js";
 import { createLike } from "./createLike.js";
 import { deleteLike } from "./deleteLike.js";
 

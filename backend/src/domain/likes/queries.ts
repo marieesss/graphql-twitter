@@ -1,5 +1,5 @@
 import { QueryResolvers, Resolvers } from "../../types.js";
-import { WithRequired } from "../../utils/mapped-types";
+import { WithRequired } from "../../utils/mapped-types.js";
 
 type PostsQueries = WithRequired<QueryResolvers, 'getPosts'>;
 
