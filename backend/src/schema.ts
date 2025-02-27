@@ -141,5 +141,6 @@ export const typeDefs = gql`
     postId: String
     commentId : String
     date_create:String
+    user : Users
   }
 `;

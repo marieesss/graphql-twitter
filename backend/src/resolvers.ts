@@ -7,6 +7,7 @@ import { followMutations } from "./domain/follower/mutations.js";
 import { UserResolvers, UsersQueries } from "./domain/user/queries.js";
 import { Resolvers } from "./types.js";
 import { LikeMutations } from "./domain/likes/mutations.js";
+import { LikesResolvers } from "./domain/likes/queries.js";
 export const resolvers: Resolvers = {
   Query: {
     ...ghibliQueries,
@@ -22,5 +23,6 @@ export const resolvers: Resolvers = {
   Film: FilmResolver,
   People: PeopleResolver,
   Users: UserResolvers, 
-  Posts : PostsResolvers
+  Posts : PostsResolvers, 
+  Like : LikesResolvers
 }

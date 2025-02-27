@@ -47,7 +47,7 @@ export const PostsQueries: PostsQueries = {
   }
 };
 
-export const PostsResolvers: Resolvers['Posts'] = {
+export const LikesResolvers: Resolvers['Like'] = {
   user: async (parent, _, {dataSources :{db}}) =>{
       try {
         const res = await db.user.findFirst({ where : { id : parent.userId }})

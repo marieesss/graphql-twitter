@@ -91,6 +91,7 @@ export type Like = {
   date_create?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   postId?: Maybe<Scalars['String']['output']>;
+  user?: Maybe<Users>;
   userId: Scalars['String']['output'];
 };
 
@@ -436,6 +437,7 @@ export type LikeResolvers<ContextType = Context, ParentType extends ResolversPar
   date_create?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   postId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['Users']>, ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
