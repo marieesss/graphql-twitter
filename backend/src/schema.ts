@@ -15,6 +15,9 @@ export const typeDefs = gql`
     updatePost(postId: ID!, text: String!, image: String ): PostsResponse
     deletePost(postId: ID!): DeletePostsResponse
     createFollow(following: String!): CreateFollowResponse
+    createLike(postId: ID, commentId: ID): CreateLikeResponse
+    deleteLike(postId: ID, commentId: ID): DeleteResponse
+
     deleteFollowing(following: String!): DeleteResponse
     deleteFollower(follower: String!): DeleteResponse
   }
@@ -65,7 +68,6 @@ export const typeDefs = gql`
     message: String!
     users: [Users]
   }
-
     type DeleteResponse {
     code: Int!
     success: Boolean!
@@ -122,5 +124,21 @@ export const typeDefs = gql`
     followers: [Users]
     following: [Users]
     posts: [Posts]
+  }
+
+
+  type CreateLikeResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    like : Like!
+  }
+
+    type Like{
+    id: ID!
+    userId : String!
+    postId: String
+    commentId : String
+    date_create:String
   }
 `;
