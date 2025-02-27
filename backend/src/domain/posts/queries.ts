@@ -13,7 +13,7 @@ export const PostsQueries: PostsQueries = {
           ...post,
           date_create: post.date_create ? post.date_create.toISOString() : '',
           date_update: post.date_update ? post.date_update.toISOString() : ''
-        } :  null;
+        } : null;
 
         return {
           code: 200,
@@ -27,7 +27,7 @@ export const PostsQueries: PostsQueries = {
         const formattedPosts = posts.map(post => ({
           ...post,
           date_create: post.date_create.toISOString(),
-          date_update: post.date_update.toISOString() 
+          date_update: post.date_update.toISOString()
         }));
         return {
           code: 200,
@@ -48,16 +48,35 @@ export const PostsQueries: PostsQueries = {
 };
 
 export const PostsResolvers: Resolvers['Posts'] = {
-  user: async (parent, _, {dataSources :{db}}) =>{
-      try {
-        const res = await db.user.findFirst({ where : { id : parent.userId }})
-        if (!res) {
-          throw new Error(`User not found for post ${parent.id}`);
-        }
-        return res
-      } catch (error) {
-        throw error
+  user: async (parent, _, { dataSources: { db } }) => {
+    try {
+      const res = await db.user.findFirst({ where: { id: parent.userId } })
+      if (!res) {
+        throw new Error(`User not found for post ${parent.id}`);
+      }
+      return res
+    } catch (error) {
+      throw error
+    }
+  },
+  comment: async (parent, _, { dataSources: { db } }) => {
+    try {
+      const res = await db.comment.findMany({
+         where: { id: parent.userId },
+         include: { user: true }
+        })
+      if(!res) {
+        throw new Error(`Comment not found for post ${parent.id}`);
       }
 
+      const formattedComments = res.map(com => ({
+        ...com,
+        date_create: com.date_create.toISOString(),
+        date_update: com.date_update.toISOString()
+      }));
+      return formattedComments
+    } catch (error) {
+      throw error
     }
   }
+}
