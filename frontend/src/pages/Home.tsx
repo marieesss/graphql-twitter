@@ -1,4 +1,3 @@
-// src/pages/Home.tsx
 import React, { useState } from 'react';
 import { useQuery, useMutation, gql } from '@apollo/client';
 import {
@@ -158,7 +157,6 @@ const Home: React.FC = () => {
   const username = localStorage.getItem('username') || 'Utilisateur';
   const { loading, error, data, refetch } = useQuery(GET_POSTS);
 
-  // Pour stocker le texte des commentaires par post (clé = post.id)
   const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
 
   const [deletePost] = useMutation(DELETE_POST_MUTATION, {
@@ -366,7 +364,6 @@ const Home: React.FC = () => {
                   <Typography variant="subtitle2">Commentaires :</Typography>
                   {post.comment &&
                     post.comment.map((com: any) => {
-                      // Vérifie si l'utilisateur connecté a liké le commentaire
                       const commentLiked =
                         com.likes && com.likes.some((like: any) => like.user.username === username);
                       return (

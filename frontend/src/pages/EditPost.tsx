@@ -1,4 +1,3 @@
-// src/pages/EditPost.tsx
 import React, { useState } from 'react';
 import { Container, Box, TextField, Button, Typography } from '@mui/material';
 import { gql, useMutation } from '@apollo/client';
@@ -28,7 +27,6 @@ const EditPost: React.FC = () => {
   const location = useLocation();
   const post = location.state?.post;
   
-  // Si aucune donnée de post n'est transmise, rediriger vers Home
   if (!post) {
     navigate('/home');
     return null;
@@ -41,7 +39,6 @@ const EditPost: React.FC = () => {
   const [updatePost, { loading }] = useMutation(UPDATE_POST_MUTATION, {
     onCompleted: (data) => {
       if (data.updatePost.success) {
-        // Redirection vers Home avec message de succès
         navigate('/home', { state: { successMessage: data.updatePost.message } });
       } else {
         setErrorMsg(data.updatePost.message);

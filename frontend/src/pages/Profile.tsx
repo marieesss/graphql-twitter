@@ -1,7 +1,14 @@
-// src/pages/Profile.tsx
 import React from 'react';
 import { useQuery, gql } from '@apollo/client';
-import { Container, Typography, Card, CardContent, CardMedia, CircularProgress, Box } from '@mui/material';
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  CardMedia,
+  CircularProgress,
+  Box
+} from '@mui/material';
 import { Navigate, useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
@@ -31,7 +38,6 @@ const GET_USER_PROFILE = gql`
 
 const Profile: React.FC = () => {
   const { userId: paramUserId } = useParams();
-  // Si un ID est passé en paramètre, on l'utilise, sinon on prend celui du user connecté
   const userId = paramUserId || localStorage.getItem('userId');
 
   if (!userId) {
@@ -39,7 +45,7 @@ const Profile: React.FC = () => {
   }
 
   const { loading, error, data } = useQuery(GET_USER_PROFILE, {
-    variables: { userId },
+    variables: { userId }
   });
 
   if (loading) return <CircularProgress />;
@@ -59,7 +65,8 @@ const Profile: React.FC = () => {
   const user = data.getUsers.users[0];
   const sortedPosts = user.posts
     ? user.posts.slice().sort(
-        (a: any, b: any) => new Date(b.date_create).getTime() - new Date(a.date_create).getTime()
+        (a: any, b: any) =>
+          new Date(b.date_create).getTime() - new Date(a.date_create).getTime()
       )
     : [];
 
@@ -71,7 +78,9 @@ const Profile: React.FC = () => {
           <Typography variant="h4" gutterBottom>
             Profil de {user.username}
           </Typography>
-          <Typography variant="body1">Nom : {user.name} {user.surname}</Typography>
+          <Typography variant="body1">
+            Nom : {user.name} {user.surname}
+          </Typography>
           <Typography variant="body1">Email : {user.email}</Typography>
           {user.bio && <Typography variant="body1">Bio : {user.bio}</Typography>}
         </Box>
