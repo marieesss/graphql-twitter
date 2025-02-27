@@ -29,7 +29,7 @@ export type CreateFollowResponse = {
 export type CreateLikeResponse = {
   __typename?: 'CreateLikeResponse';
   code: Scalars['Int']['output'];
-  like?: Maybe<Like>;
+  like: Like;
   message: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
 };
@@ -184,6 +184,7 @@ export type Posts = {
   date_update?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   image?: Maybe<Scalars['String']['output']>;
+  likes?: Maybe<Array<Maybe<Like>>>;
   text: Scalars['String']['output'];
   user?: Maybe<Users>;
   userId: Scalars['ID']['output'];
@@ -373,7 +374,7 @@ export type CreateFollowResponseResolvers<ContextType = Context, ParentType exte
 
 export type CreateLikeResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateLikeResponse'] = ResolversParentTypes['CreateLikeResponse']> = {
   code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  like?: Resolver<Maybe<ResolversTypes['Like']>, ParentType, ContextType>;
+  like?: Resolver<ResolversTypes['Like'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -465,6 +466,7 @@ export type PostsResolvers<ContextType = Context, ParentType extends ResolversPa
   date_update?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  likes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Like']>>>, ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['Users']>, ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;

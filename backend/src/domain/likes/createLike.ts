@@ -12,7 +12,7 @@ export const createLike: NonNullable<MutationResolvers['createLike']> = async (
         code: 401,
         message: 'Forbidden',
         success: false,
-        post: null
+        like: null
       };
     }
 
@@ -63,7 +63,7 @@ export const createLike: NonNullable<MutationResolvers['createLike']> = async (
       code: 400,
       message: 'Like has not been created',
       success: false,
-      post: null
+      like: null
     };
   }
 };

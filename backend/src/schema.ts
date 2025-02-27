@@ -89,6 +89,7 @@ export const typeDefs = gql`
     image : String
     date_create : String!
     date_update:String
+    likes : [Like]
   }
 
 
