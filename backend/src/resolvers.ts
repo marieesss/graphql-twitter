@@ -6,7 +6,7 @@ import { userMutations } from "./domain/user/mutations.js";
 import { followMutations } from "./domain/follower/mutations.js";
 import { UserResolvers, UsersQueries } from "./domain/user/queries.js";
 import { Resolvers } from "./types.js";
-import { CommentsQueries } from "./domain/commentaire/queries.js";
+import { CommentsQueries, CommentsResolvers } from "./domain/commentaire/queries.js";
 import { commentMutations } from "./domain/commentaire/mutation.js";
 
 import { LikeMutations } from "./domain/likes/mutations.js";
@@ -29,5 +29,6 @@ export const resolvers: Resolvers = {
   People: PeopleResolver,
   Users: UserResolvers, 
   Posts : PostsResolvers, 
-  Like : LikesResolvers
+  Like : LikesResolvers,
+  Comments : CommentsResolvers
 }
