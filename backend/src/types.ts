@@ -41,6 +41,13 @@ export type DeletePostsResponse = {
   success: Scalars['Boolean']['output'];
 };
 
+export type DeleteResponse = {
+  __typename?: 'DeleteResponse';
+  code: Scalars['Int']['output'];
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type Film = {
   __typename?: 'Film';
   id?: Maybe<Scalars['ID']['output']>;
@@ -75,6 +82,8 @@ export type Mutation = {
   createFollow?: Maybe<CreateFollowResponse>;
   createPost?: Maybe<PostsResponse>;
   createUser?: Maybe<CreateUserResponse>;
+  deleteFollower?: Maybe<DeleteResponse>;
+  deleteFollowing?: Maybe<DeleteResponse>;
   deletePost?: Maybe<DeletePostsResponse>;
   signIn?: Maybe<SigninResponse>;
   updatePost?: Maybe<PostsResponse>;
@@ -82,7 +91,6 @@ export type Mutation = {
 
 
 export type MutationCreateFollowArgs = {
-  follower: Scalars['String']['input'];
   following: Scalars['String']['input'];
 };
 
@@ -101,6 +109,16 @@ export type MutationCreateUserArgs = {
   password: Scalars['String']['input'];
   surname: Scalars['String']['input'];
   username: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteFollowerArgs = {
+  follower: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteFollowingArgs = {
+  following: Scalars['String']['input'];
 };
 
 
@@ -268,6 +286,7 @@ export type ResolversTypes = {
   CreateFollowResponse: ResolverTypeWrapper<CreateFollowResponse>;
   CreateUserResponse: ResolverTypeWrapper<CreateUserResponse>;
   DeletePostsResponse: ResolverTypeWrapper<DeletePostsResponse>;
+  DeleteResponse: ResolverTypeWrapper<DeleteResponse>;
   Film: ResolverTypeWrapper<FilmModel>;
   Follow: ResolverTypeWrapper<Follow>;
   GetPostsResponse: ResolverTypeWrapper<GetPostsResponse>;
@@ -291,6 +310,7 @@ export type ResolversParentTypes = {
   CreateFollowResponse: CreateFollowResponse;
   CreateUserResponse: CreateUserResponse;
   DeletePostsResponse: DeletePostsResponse;
+  DeleteResponse: DeleteResponse;
   Film: FilmModel;
   Follow: Follow;
   GetPostsResponse: GetPostsResponse;
@@ -331,6 +351,13 @@ export type DeletePostsResponseResolvers<ContextType = Context, ParentType exten
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type DeleteResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeleteResponse'] = ResolversParentTypes['DeleteResponse']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type FilmResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Film'] = ResolversParentTypes['Film']> = {
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   people?: Resolver<Array<Maybe<ResolversTypes['People']>>, ParentType, ContextType>;
@@ -361,9 +388,11 @@ export type GetUsersResponseResolvers<ContextType = Context, ParentType extends 
 };
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createFollow?: Resolver<Maybe<ResolversTypes['CreateFollowResponse']>, ParentType, ContextType, RequireFields<MutationCreateFollowArgs, 'follower' | 'following'>>;
+  createFollow?: Resolver<Maybe<ResolversTypes['CreateFollowResponse']>, ParentType, ContextType, RequireFields<MutationCreateFollowArgs, 'following'>>;
   createPost?: Resolver<Maybe<ResolversTypes['PostsResponse']>, ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'text' | 'userId'>>;
   createUser?: Resolver<Maybe<ResolversTypes['CreateUserResponse']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'email' | 'name' | 'password' | 'surname' | 'username'>>;
+  deleteFollower?: Resolver<Maybe<ResolversTypes['DeleteResponse']>, ParentType, ContextType, RequireFields<MutationDeleteFollowerArgs, 'follower'>>;
+  deleteFollowing?: Resolver<Maybe<ResolversTypes['DeleteResponse']>, ParentType, ContextType, RequireFields<MutationDeleteFollowingArgs, 'following'>>;
   deletePost?: Resolver<Maybe<ResolversTypes['DeletePostsResponse']>, ParentType, ContextType, RequireFields<MutationDeletePostArgs, 'postId'>>;
   signIn?: Resolver<Maybe<ResolversTypes['SigninResponse']>, ParentType, ContextType, RequireFields<MutationSignInArgs, 'password' | 'username'>>;
   updatePost?: Resolver<Maybe<ResolversTypes['PostsResponse']>, ParentType, ContextType, RequireFields<MutationUpdatePostArgs, 'postId' | 'text'>>;
@@ -434,6 +463,7 @@ export type Resolvers<ContextType = Context> = {
   CreateFollowResponse?: CreateFollowResponseResolvers<ContextType>;
   CreateUserResponse?: CreateUserResponseResolvers<ContextType>;
   DeletePostsResponse?: DeletePostsResponseResolvers<ContextType>;
+  DeleteResponse?: DeleteResponseResolvers<ContextType>;
   Film?: FilmResolvers<ContextType>;
   Follow?: FollowResolvers<ContextType>;
   GetPostsResponse?: GetPostsResponseResolvers<ContextType>;
