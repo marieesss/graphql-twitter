@@ -24,12 +24,10 @@ const Login: React.FC = () => {
   const [signIn, { loading }] = useMutation(SIGNIN_MUTATION, {
     onCompleted: (data) => {
       if (data.signIn.success) {
-        // Stocke le token, l'userId et le username
         localStorage.setItem('token', data.signIn.token);
-        localStorage.setItem('userId', data.signIn.id);       // <-- on stocke l'id
+        localStorage.setItem('userId', data.signIn.id);     
         localStorage.setItem('username', username);
         
-        // Redirige vers /home
         navigate('/home');
       } else {
         setErrorMsg(data.signIn.message);

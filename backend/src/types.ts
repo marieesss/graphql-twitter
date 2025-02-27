@@ -18,10 +18,29 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type Comments = {
+  __typename?: 'Comments';
+  date_create: Scalars['String']['output'];
+  date_update?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  likes?: Maybe<Array<Maybe<Like>>>;
+  text: Scalars['String']['output'];
+  user?: Maybe<Users>;
+  userId: Scalars['ID']['output'];
+};
+
 export type CreateFollowResponse = {
   __typename?: 'CreateFollowResponse';
   code: Scalars['Int']['output'];
   follow?: Maybe<Follow>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
+export type CreateLikeResponse = {
+  __typename?: 'CreateLikeResponse';
+  code: Scalars['Int']['output'];
+  like?: Maybe<Like>;
   message: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
 };
@@ -61,6 +80,14 @@ export type Follow = {
   following: Scalars['String']['output'];
 };
 
+export type GetCommentsResponse = {
+  __typename?: 'GetCommentsResponse';
+  code: Scalars['Int']['output'];
+  comments?: Maybe<Array<Maybe<Comments>>>;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type GetPostsResponse = {
   __typename?: 'GetPostsResponse';
   code: Scalars['Int']['output'];
@@ -77,16 +104,37 @@ export type GetUsersResponse = {
   users?: Maybe<Array<Maybe<Users>>>;
 };
 
+export type Like = {
+  __typename?: 'Like';
+  commentId?: Maybe<Scalars['String']['output']>;
+  date_create?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  postId?: Maybe<Scalars['String']['output']>;
+  user?: Maybe<Users>;
+  userId: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createComment?: Maybe<GetCommentsResponse>;
   createFollow?: Maybe<CreateFollowResponse>;
+  createLike?: Maybe<CreateLikeResponse>;
   createPost?: Maybe<PostsResponse>;
   createUser?: Maybe<CreateUserResponse>;
+  deleteComment?: Maybe<GetCommentsResponse>;
   deleteFollower?: Maybe<DeleteResponse>;
   deleteFollowing?: Maybe<DeleteResponse>;
+  deleteLike?: Maybe<DeleteResponse>;
   deletePost?: Maybe<DeletePostsResponse>;
   signIn?: Maybe<SigninResponse>;
+  updateComment?: Maybe<GetCommentsResponse>;
   updatePost?: Maybe<PostsResponse>;
+};
+
+
+export type MutationCreateCommentArgs = {
+  postId: Scalars['ID']['input'];
+  text: Scalars['String']['input'];
 };
 
 
@@ -95,10 +143,15 @@ export type MutationCreateFollowArgs = {
 };
 
 
+export type MutationCreateLikeArgs = {
+  commentId?: InputMaybe<Scalars['ID']['input']>;
+  postId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
 export type MutationCreatePostArgs = {
   image?: InputMaybe<Scalars['String']['input']>;
   text: Scalars['String']['input'];
-  userId: Scalars['ID']['input'];
 };
 
 
@@ -112,6 +165,11 @@ export type MutationCreateUserArgs = {
 };
 
 
+export type MutationDeleteCommentArgs = {
+  comId: Scalars['ID']['input'];
+};
+
+
 export type MutationDeleteFollowerArgs = {
   follower: Scalars['String']['input'];
 };
@@ -119,6 +177,12 @@ export type MutationDeleteFollowerArgs = {
 
 export type MutationDeleteFollowingArgs = {
   following: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteLikeArgs = {
+  commentId?: InputMaybe<Scalars['ID']['input']>;
+  postId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
@@ -130,6 +194,12 @@ export type MutationDeletePostArgs = {
 export type MutationSignInArgs = {
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateCommentArgs = {
+  comId: Scalars['ID']['input'];
+  text: Scalars['String']['input'];
 };
 
 
@@ -149,10 +219,12 @@ export type People = {
 
 export type Posts = {
   __typename?: 'Posts';
+  comment?: Maybe<Array<Maybe<Comments>>>;
   date_create: Scalars['String']['output'];
   date_update?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   image?: Maybe<Scalars['String']['output']>;
+  likes?: Maybe<Array<Maybe<Like>>>;
   text: Scalars['String']['output'];
   user?: Maybe<Users>;
   userId: Scalars['ID']['output'];
@@ -168,10 +240,16 @@ export type PostsResponse = {
 
 export type Query = {
   __typename?: 'Query';
+  getComments?: Maybe<GetCommentsResponse>;
   getFilms: Array<Maybe<Film>>;
   getPeople: Array<Maybe<People>>;
   getPosts?: Maybe<GetPostsResponse>;
   getUsers?: Maybe<GetUsersResponse>;
+};
+
+
+export type QueryGetCommentsArgs = {
+  comId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
@@ -284,16 +362,20 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  Comments: ResolverTypeWrapper<Comments>;
   CreateFollowResponse: ResolverTypeWrapper<CreateFollowResponse>;
+  CreateLikeResponse: ResolverTypeWrapper<CreateLikeResponse>;
   CreateUserResponse: ResolverTypeWrapper<CreateUserResponse>;
   DeletePostsResponse: ResolverTypeWrapper<DeletePostsResponse>;
   DeleteResponse: ResolverTypeWrapper<DeleteResponse>;
   Film: ResolverTypeWrapper<FilmModel>;
   Follow: ResolverTypeWrapper<Follow>;
+  GetCommentsResponse: ResolverTypeWrapper<GetCommentsResponse>;
   GetPostsResponse: ResolverTypeWrapper<GetPostsResponse>;
   GetUsersResponse: ResolverTypeWrapper<GetUsersResponse>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  Like: ResolverTypeWrapper<Like>;
   Mutation: ResolverTypeWrapper<{}>;
   People: ResolverTypeWrapper<PeopleModel>;
   Posts: ResolverTypeWrapper<Posts>;
@@ -308,16 +390,20 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
+  Comments: Comments;
   CreateFollowResponse: CreateFollowResponse;
+  CreateLikeResponse: CreateLikeResponse;
   CreateUserResponse: CreateUserResponse;
   DeletePostsResponse: DeletePostsResponse;
   DeleteResponse: DeleteResponse;
   Film: FilmModel;
   Follow: Follow;
+  GetCommentsResponse: GetCommentsResponse;
   GetPostsResponse: GetPostsResponse;
   GetUsersResponse: GetUsersResponse;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
+  Like: Like;
   Mutation: {};
   People: PeopleModel;
   Posts: Posts;
@@ -329,9 +415,28 @@ export type ResolversParentTypes = {
   Users: Users;
 };
 
+export type CommentsResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Comments'] = ResolversParentTypes['Comments']> = {
+  date_create?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  date_update?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  likes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Like']>>>, ParentType, ContextType>;
+  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['Users']>, ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type CreateFollowResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateFollowResponse'] = ResolversParentTypes['CreateFollowResponse']> = {
   code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   follow?: Resolver<Maybe<ResolversTypes['Follow']>, ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CreateLikeResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateLikeResponse'] = ResolversParentTypes['CreateLikeResponse']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  like?: Resolver<Maybe<ResolversTypes['Like']>, ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -372,6 +477,14 @@ export type FollowResolvers<ContextType = Context, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type GetCommentsResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GetCommentsResponse'] = ResolversParentTypes['GetCommentsResponse']> = {
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  comments?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comments']>>>, ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type GetPostsResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GetPostsResponse'] = ResolversParentTypes['GetPostsResponse']> = {
   code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -388,14 +501,29 @@ export type GetUsersResponseResolvers<ContextType = Context, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type LikeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Like'] = ResolversParentTypes['Like']> = {
+  commentId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  date_create?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  postId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['Users']>, ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createComment?: Resolver<Maybe<ResolversTypes['GetCommentsResponse']>, ParentType, ContextType, RequireFields<MutationCreateCommentArgs, 'postId' | 'text'>>;
   createFollow?: Resolver<Maybe<ResolversTypes['CreateFollowResponse']>, ParentType, ContextType, RequireFields<MutationCreateFollowArgs, 'following'>>;
-  createPost?: Resolver<Maybe<ResolversTypes['PostsResponse']>, ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'text' | 'userId'>>;
+  createLike?: Resolver<Maybe<ResolversTypes['CreateLikeResponse']>, ParentType, ContextType, Partial<MutationCreateLikeArgs>>;
+  createPost?: Resolver<Maybe<ResolversTypes['PostsResponse']>, ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'text'>>;
   createUser?: Resolver<Maybe<ResolversTypes['CreateUserResponse']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'email' | 'name' | 'password' | 'surname' | 'username'>>;
+  deleteComment?: Resolver<Maybe<ResolversTypes['GetCommentsResponse']>, ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'comId'>>;
   deleteFollower?: Resolver<Maybe<ResolversTypes['DeleteResponse']>, ParentType, ContextType, RequireFields<MutationDeleteFollowerArgs, 'follower'>>;
   deleteFollowing?: Resolver<Maybe<ResolversTypes['DeleteResponse']>, ParentType, ContextType, RequireFields<MutationDeleteFollowingArgs, 'following'>>;
+  deleteLike?: Resolver<Maybe<ResolversTypes['DeleteResponse']>, ParentType, ContextType, Partial<MutationDeleteLikeArgs>>;
   deletePost?: Resolver<Maybe<ResolversTypes['DeletePostsResponse']>, ParentType, ContextType, RequireFields<MutationDeletePostArgs, 'postId'>>;
   signIn?: Resolver<Maybe<ResolversTypes['SigninResponse']>, ParentType, ContextType, RequireFields<MutationSignInArgs, 'password' | 'username'>>;
+  updateComment?: Resolver<Maybe<ResolversTypes['GetCommentsResponse']>, ParentType, ContextType, RequireFields<MutationUpdateCommentArgs, 'comId' | 'text'>>;
   updatePost?: Resolver<Maybe<ResolversTypes['PostsResponse']>, ParentType, ContextType, RequireFields<MutationUpdatePostArgs, 'postId' | 'text'>>;
 };
 
@@ -408,10 +536,12 @@ export type PeopleResolvers<ContextType = Context, ParentType extends ResolversP
 };
 
 export type PostsResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Posts'] = ResolversParentTypes['Posts']> = {
+  comment?: Resolver<Maybe<Array<Maybe<ResolversTypes['Comments']>>>, ParentType, ContextType>;
   date_create?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   date_update?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  likes?: Resolver<Maybe<Array<Maybe<ResolversTypes['Like']>>>, ParentType, ContextType>;
   text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['Users']>, ParentType, ContextType>;
   userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -427,6 +557,7 @@ export type PostsResponseResolvers<ContextType = Context, ParentType extends Res
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getComments?: Resolver<Maybe<ResolversTypes['GetCommentsResponse']>, ParentType, ContextType, Partial<QueryGetCommentsArgs>>;
   getFilms?: Resolver<Array<Maybe<ResolversTypes['Film']>>, ParentType, ContextType>;
   getPeople?: Resolver<Array<Maybe<ResolversTypes['People']>>, ParentType, ContextType>;
   getPosts?: Resolver<Maybe<ResolversTypes['GetPostsResponse']>, ParentType, ContextType, Partial<QueryGetPostsArgs>>;
@@ -462,14 +593,18 @@ export type UsersResolvers<ContextType = Context, ParentType extends ResolversPa
 };
 
 export type Resolvers<ContextType = Context> = {
+  Comments?: CommentsResolvers<ContextType>;
   CreateFollowResponse?: CreateFollowResponseResolvers<ContextType>;
+  CreateLikeResponse?: CreateLikeResponseResolvers<ContextType>;
   CreateUserResponse?: CreateUserResponseResolvers<ContextType>;
   DeletePostsResponse?: DeletePostsResponseResolvers<ContextType>;
   DeleteResponse?: DeleteResponseResolvers<ContextType>;
   Film?: FilmResolvers<ContextType>;
   Follow?: FollowResolvers<ContextType>;
+  GetCommentsResponse?: GetCommentsResponseResolvers<ContextType>;
   GetPostsResponse?: GetPostsResponseResolvers<ContextType>;
   GetUsersResponse?: GetUsersResponseResolvers<ContextType>;
+  Like?: LikeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   People?: PeopleResolvers<ContextType>;
   Posts?: PostsResolvers<ContextType>;
