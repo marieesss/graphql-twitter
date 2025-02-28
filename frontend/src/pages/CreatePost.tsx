@@ -1,46 +1,24 @@
 // src/pages/CreatePost.tsx
 import React, { useState } from 'react';
 import { Container, Box, TextField, Button, Typography } from '@mui/material';
-import { gql, useMutation } from '@apollo/client';
+import { useCreatePostMutation } from '../generated/graphql';
 import { useNavigate } from 'react-router-dom';
 
-const CREATE_POST_MUTATION = gql`
-  mutation CreatePost($text: String!, $image: String) {
-    createPost(text: $text, image: $image) {
-      code
-      success
-      message
-      post {
-        id
-        text
-        image
-        date_create
-        user {
-          username
-        }
-      }
-    }
-  }
-`;
-
 const CreatePost: React.FC = () => {
-  const [text, setText] = useState<string>('');
-  const [image, setImage] = useState<string>('');
-  const [errorMsg, setErrorMsg] = useState<string>('');
+  const [text, setText] = useState('');
+  const [image, setImage] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
-  const [createPost, { loading }] = useMutation(CREATE_POST_MUTATION, {
+  const [createPost, { loading }] = useCreatePostMutation({
     onCompleted: (data) => {
-      if (data.createPost.success) {
-        // Redirection vers Home en passant un message de réussite dans le state
+      if (data.createPost?.success) {
         navigate('/home', { state: { successMessage: data.createPost.message } });
       } else {
-        setErrorMsg(data.createPost.message);
+        setErrorMsg(data.createPost?.message || 'Erreur inconnue');
       }
     },
-    onError: (error) => {
-      setErrorMsg(error.message);
-    }
+    onError: (error) => setErrorMsg(error.message)
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,7 +28,7 @@ const CreatePost: React.FC = () => {
 
   return (
     <Container maxWidth="sm">
-      <Box mt={8} p={4} boxShadow={3}>
+      <Box mt={8} p={4} sx={{ boxShadow: 3, borderRadius: '12px', backgroundColor: '#fff' }}>
         <Typography variant="h4" component="h1" align="center" gutterBottom>
           Créer un post
         </Typography>

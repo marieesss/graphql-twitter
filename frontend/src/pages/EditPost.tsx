@@ -1,26 +1,8 @@
+// src/pages/EditPost.tsx
 import React, { useState } from 'react';
 import { Container, Box, TextField, Button, Typography } from '@mui/material';
-import { gql, useMutation } from '@apollo/client';
+import { useUpdatePostMutation } from '../generated/graphql';
 import { useNavigate, useLocation } from 'react-router-dom';
-
-const UPDATE_POST_MUTATION = gql`
-  mutation UpdatePost($postId: ID!, $text: String!, $image: String) {
-    updatePost(postId: $postId, text: $text, image: $image) {
-      code
-      success
-      message
-      post {
-        id
-        text
-        image
-        date_create
-        user {
-          username
-        }
-      }
-    }
-  }
-`;
 
 const EditPost: React.FC = () => {
   const navigate = useNavigate();
@@ -32,31 +14,29 @@ const EditPost: React.FC = () => {
     return null;
   }
   
-  const [text, setText] = useState<string>(post.text);
-  const [image, setImage] = useState<string>(post.image || '');
-  const [errorMsg, setErrorMsg] = useState<string>('');
-
-  const [updatePost, { loading }] = useMutation(UPDATE_POST_MUTATION, {
+  const [text, setText] = useState(post.text);
+  const [image, setImage] = useState(post.image || '');
+  const [errorMsg, setErrorMsg] = useState('');
+  
+  const [updatePost, { loading }] = useUpdatePostMutation({
     onCompleted: (data) => {
-      if (data.updatePost.success) {
+      if (data.updatePost?.success) {
         navigate('/home', { state: { successMessage: data.updatePost.message } });
       } else {
-        setErrorMsg(data.updatePost.message);
+        setErrorMsg(data.updatePost?.message || 'Erreur inconnue');
       }
     },
-    onError: (error) => {
-      setErrorMsg(error.message);
-    }
+    onError: (error) => setErrorMsg(error.message)
   });
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await updatePost({ variables: { postId: post.id, text, image } });
   };
-
+  
   return (
     <Container maxWidth="sm">
-      <Box mt={8} p={4} boxShadow={3}>
+      <Box mt={8} p={4} sx={{ boxShadow: 3, borderRadius: '12px', backgroundColor: '#fff' }}>
         <Typography variant="h4" component="h1" align="center" gutterBottom>
           Modifier le post
         </Typography>

@@ -1,5 +1,5 @@
+// src/pages/Home.tsx
 import React, { useState } from 'react';
-import { useQuery, useMutation, gql } from '@apollo/client';
 import {
   Container,
   Typography,
@@ -24,148 +24,21 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-
-const GET_POSTS = gql`
-  query GetPosts {
-    getPosts {
-      code
-      success
-      message
-      post {
-        id
-        text
-        image
-        date_create
-        user {
-          id
-          username
-        }
-        likes {
-          id
-          userId
-          user {
-            username
-          }
-        }
-        comment {
-          id
-          text
-          date_create
-          user {
-            username
-          }
-          likes {
-            id
-            userId
-            user {
-              username
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-const DELETE_POST_MUTATION = gql`
-  mutation DeletePost($postId: ID!) {
-    deletePost(postId: $postId) {
-      code
-      success
-      message
-    }
-  }
-`;
-
-const CREATE_LIKE_MUTATION = gql`
-  mutation CreateLike($postId: ID!) {
-    createLike(postId: $postId) {
-      code
-      success
-      message
-      like {
-        id
-        userId
-        postId
-        date_create
-        user {
-          username
-        }
-      }
-    }
-  }
-`;
-
-const DELETE_LIKE_MUTATION = gql`
-  mutation DeleteLike($postId: ID!) {
-    deleteLike(postId: $postId) {
-      code
-      success
-      message
-    }
-  }
-`;
-
-const CREATE_COMMENT_MUTATION = gql`
-  mutation CreateComment($text: String!, $postId: ID!) {
-    createComment(text: $text, postId: $postId) {
-      code
-      success
-      message
-      comments {
-        id
-        text
-        date_create
-        user {
-          username
-        }
-        likes {
-          id
-          userId
-          user {
-            username
-          }
-        }
-      }
-    }
-  }
-`;
-
-const CREATE_COMMENT_LIKE_MUTATION = gql`
-  mutation CreateCommentLike($commentId: ID!) {
-    createLike(commentId: $commentId) {
-      code
-      success
-      message
-      like {
-        id
-        userId
-        commentId
-        date_create
-        user {
-          username
-        }
-      }
-    }
-  }
-`;
-
-const DELETE_COMMENT_LIKE_MUTATION = gql`
-  mutation DeleteCommentLike($commentId: ID!) {
-    deleteLike(commentId: $commentId) {
-      code
-      success
-      message
-    }
-  }
-`;
+import {
+  useGetPostsQuery,
+  useDeletePostMutation,
+  useCreateLikeMutation,
+  useDeleteLikeMutation,
+  useCreateCommentMutation,
+  useCreateCommentLikeMutation,
+  useDeleteCommentLikeMutation
+} from '../generated/graphql';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const successMessageFromState = location.state?.successMessage;
   const username = localStorage.getItem('username') || 'Utilisateur';
-  const { loading, error, data, refetch } = useQuery(GET_POSTS);
+  const { data, loading, error, refetch } = useGetPostsQuery();
 
   const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
   const [openDialog, setOpenDialog] = useState(false);
@@ -173,14 +46,14 @@ const Home: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const [deletePost] = useMutation(DELETE_POST_MUTATION, {
+  const [deletePost] = useDeletePostMutation({
     onCompleted: (data) => {
-      if (data.deletePost.success) {
+      if (data.deletePost?.success) {
         setSnackbarMessage('Post supprimé avec succès.');
         setSnackbarOpen(true);
         refetch();
       } else {
-        setSnackbarMessage(data.deletePost.message);
+        setSnackbarMessage(data.deletePost?.message || 'Erreur');
         setSnackbarOpen(true);
       }
       setOpenDialog(false);
@@ -192,11 +65,11 @@ const Home: React.FC = () => {
     }
   });
 
-  const [createLike] = useMutation(CREATE_LIKE_MUTATION, {
+  const [createLike] = useCreateLikeMutation({
     onCompleted: (data) => {
-      if (data.createLike.success) refetch();
+      if (data.createLike?.success) refetch();
       else {
-        setSnackbarMessage(data.createLike.message);
+        setSnackbarMessage(data.createLike?.message || 'Erreur');
         setSnackbarOpen(true);
       }
     },
@@ -206,11 +79,11 @@ const Home: React.FC = () => {
     }
   });
 
-  const [deleteLike] = useMutation(DELETE_LIKE_MUTATION, {
+  const [deleteLike] = useDeleteLikeMutation({
     onCompleted: (data) => {
-      if (data.deleteLike.success) refetch();
+      if (data.deleteLike?.success) refetch();
       else {
-        setSnackbarMessage(data.deleteLike.message);
+        setSnackbarMessage(data.deleteLike?.message || 'Erreur');
         setSnackbarOpen(true);
       }
     },
@@ -220,11 +93,11 @@ const Home: React.FC = () => {
     }
   });
 
-  const [createComment] = useMutation(CREATE_COMMENT_MUTATION, {
+  const [createComment] = useCreateCommentMutation({
     onCompleted: (data) => {
-      if (data.createComment.success) refetch();
+      if (data.createComment?.success) refetch();
       else {
-        setSnackbarMessage(data.createComment.message);
+        setSnackbarMessage(data.createComment?.message || 'Erreur');
         setSnackbarOpen(true);
       }
     },
@@ -234,11 +107,11 @@ const Home: React.FC = () => {
     }
   });
 
-  const [createCommentLike] = useMutation(CREATE_COMMENT_LIKE_MUTATION, {
+  const [createCommentLike] = useCreateCommentLikeMutation({
     onCompleted: (data) => {
       if (data.createLike && data.createLike.success) refetch();
       else {
-        setSnackbarMessage(data.createLike.message);
+        setSnackbarMessage(data.createLike?.message || 'Erreur');
         setSnackbarOpen(true);
       }
     },
@@ -248,11 +121,11 @@ const Home: React.FC = () => {
     }
   });
 
-  const [deleteCommentLike] = useMutation(DELETE_COMMENT_LIKE_MUTATION, {
+  const [deleteCommentLike] = useDeleteCommentLikeMutation({
     onCompleted: (data) => {
       if (data.deleteLike && data.deleteLike.success) refetch();
       else {
-        setSnackbarMessage(data.deleteLike.message);
+        setSnackbarMessage(data.deleteLike?.message || 'Erreur');
         setSnackbarOpen(true);
       }
     },
@@ -300,10 +173,9 @@ const Home: React.FC = () => {
   if (loading) return <CircularProgress />;
   if (error) return <Typography variant="body1">Erreur : {error.message}</Typography>;
 
-  // Afficher tous les posts en une colonne
-  const posts = data.getPosts.post.slice().sort(
+  const postsArray = data?.getPosts?.post?.slice().sort(
     (a: any, b: any) => new Date(b.date_create).getTime() - new Date(a.date_create).getTime()
-  );
+  ) || [];
 
   return (
     <>
@@ -313,26 +185,19 @@ const Home: React.FC = () => {
           <Typography variant="h3" component="h1" gutterBottom>
             Bienvenue sur Twitter, {username} !
           </Typography>
-          {successMessageFromState && (
+          {location.state?.successMessage && (
             <Alert severity="success" sx={{ mt: 2 }}>
-              {successMessageFromState}
+              {location.state.successMessage}
             </Alert>
           )}
         </Box>
-
         <Box display="flex" justifyContent="center" mb={4}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => navigate('/create-post')}
-            size="large"
-          >
+          <Button variant="contained" color="primary" onClick={() => navigate('/create-post')} size="large">
             Créer un post
           </Button>
         </Box>
-
         <Grid container spacing={3}>
-          {posts.map((post: any) => {
+          {postsArray.map((post: any) => {
             const userLiked = post.likes && post.likes.some((like: any) => like.user.username === username);
             return (
               <Grid item xs={12} key={post.id}>
@@ -365,21 +230,12 @@ const Home: React.FC = () => {
                       {post.text}
                     </Typography>
                     <Box display="flex" justifyContent="space-between" alignItems="center">
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => handleLikeToggle(post.id, userLiked)}
-                      >
+                      <Button variant="outlined" color="primary" onClick={() => handleLikeToggle(post.id, userLiked)}>
                         {userLiked ? 'Unlike' : 'Like'} ({post.likes ? post.likes.length : 0})
                       </Button>
                       {post.user?.username === username && (
                         <Box>
-                          <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={() => navigate('/edit-post', { state: { post } })}
-                            sx={{ mr: 1 }}
-                          >
+                          <Button variant="outlined" color="primary" onClick={() => navigate('/edit-post', { state: { post } })} sx={{ mr: 1 }}>
                             Modifier
                           </Button>
                           <Button variant="outlined" color="error" onClick={() => handleDelete(post.id)}>
@@ -394,8 +250,7 @@ const Home: React.FC = () => {
                       </Typography>
                       {post.comment &&
                         post.comment.map((com: any) => {
-                          const commentLiked =
-                            com.likes && com.likes.some((like: any) => like.user.username === username);
+                          const commentLiked = com.likes && com.likes.some((like: any) => like.user.username === username);
                           return (
                             <Box key={com.id} sx={{ ml: 2, mt: 1, p: 1, border: '1px solid #ccc', borderRadius: '8px' }}>
                               <Typography variant="caption">
@@ -405,11 +260,7 @@ const Home: React.FC = () => {
                                 {com.text}
                               </Typography>
                               <Box mt={1}>
-                                <Button
-                                  variant="outlined"
-                                  size="small"
-                                  onClick={() => handleCommentLikeToggle(com.id, commentLiked)}
-                                >
+                                <Button variant="outlined" size="small" onClick={() => handleCommentLikeToggle(com.id, commentLiked)}>
                                   {commentLiked ? 'Unlike' : 'Like'} ({com.likes ? com.likes.length : 0})
                                 </Button>
                               </Box>
