@@ -10,10 +10,6 @@ Exemple de .env:
 ```bash
 JWT_SECRET= monsecret;
 ```
-Lancement de la compilation de codegen
-```bash
-npm run codegen
-```
 
 Téléchargement des dépendances
 ```bash
@@ -31,10 +27,6 @@ Pour lancer le projet front-end la mise en place ce fais de la manière suivante
 Téléchargement des dépendances:
 ```bash
 npm install
-```
-Lancement de la compilation de codegen
-```bash
-npm run codegen
 ```
 Lancer le front-end: 
 ```bash
