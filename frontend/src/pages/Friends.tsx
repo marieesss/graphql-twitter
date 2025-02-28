@@ -3,6 +3,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import { gql } from "graphql-tag";
 import { Button, TextField, Box, Typography, Card, CardContent } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import Navbar from '../components/Navbar';
 
 interface User {
   id: string;
@@ -11,6 +12,18 @@ interface User {
   name?: string;
   surname?: string;
   following?: { id: string; username: string }[];
+}
+
+interface UsersResponse {
+  getUsers: {
+    users: User[];
+  };
+}
+
+interface FriendsResponse {
+  getUsers: {
+    users: { following: { id: string; username: string }[] }[];
+  };
 }
 
 const GET_USERS = gql`
@@ -59,7 +72,7 @@ const Friends: React.FC = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
 
   useEffect(() => {
     if (!token) {
@@ -67,20 +80,16 @@ const Friends: React.FC = () => {
     }
   }, [token, navigate]);
 
-  const { loading: loadingUsers, error: errorUsers, data: dataUsers, refetch: refetchUsers } = useQuery<{ getUsers: { users: User[] } }>(
-    GET_USERS,
-    {
+  const { loading: loadingUsers, error: errorUsers, data: dataUsers, refetch: refetchUsers } =
+    useQuery<UsersResponse>(GET_USERS, {
       context: { headers: { Authorization: `Bearer ${token}` } },
-    }
-  );
+    });
 
-  const { loading: loadingFriends, error: errorFriends, data: dataFriends, refetch: refetchFriends } = useQuery<{ getUsers: { users: { following: { id: string; username: string }[] }[] } }>(
-    GET_USER_FRIENDS,
-    {
+  const { loading: loadingFriends, error: errorFriends, data: dataFriends, refetch: refetchFriends } =
+    useQuery<FriendsResponse>(GET_USER_FRIENDS, {
       variables: { userId },
       context: { headers: { Authorization: `Bearer ${token}` } },
-    }
-  );
+    });
 
   const [createFollow] = useMutation(CREATE_FOLLOW, {
     context: { headers: { Authorization: `Bearer ${token}` } },
@@ -104,8 +113,7 @@ const Friends: React.FC = () => {
   if (errorUsers || errorFriends) return <p>Error: {errorUsers?.message || errorFriends?.message}</p>;
 
   const users = dataUsers?.getUsers?.users ?? [];
-  const friends: { id: string; username: string }[] =
-    dataFriends?.getUsers?.users?.[0]?.following ?? [];
+  const friends: { id: string; username: string }[] = dataFriends?.getUsers?.users?.[0]?.following ?? [];
 
   const filteredUsers = users.filter(
     (u) => u.username.toLowerCase().includes(search.toLowerCase()) && u.id !== userId
@@ -128,68 +136,68 @@ const Friends: React.FC = () => {
   };
 
   return (
-    <Box p={4}>
-      <Typography variant="h4" gutterBottom>
-        Friends
-      </Typography>
-      <TextField
-        label="Search users..."
-        variant="outlined"
-        fullWidth
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        margin="normal"
-      />
+    <>
+      <Navbar />
+        <Box p={10}>
+        <Typography variant="h4" gutterBottom>
+            Friends
+        </Typography>
+        <TextField
+            label="Search users..."
+            variant="outlined"
+            fullWidth
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            margin="normal"
+        />
 
-      <Typography variant="h5" mt={2}>
-        Utilisateurs
-      </Typography>
-      <Box display="flex" flexWrap="wrap" gap={2}>
-        {filteredUsers.map((user: User) => {
-          const alreadyFollowing = friends.some((f) => f.id === user.id);
-          return (
-            <Card key={user.id} sx={{ width: 250 }}>
-              <CardContent>
-                <Typography>{user.username}</Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled={alreadyFollowing}
-                  onClick={() => handleFollow(user.id)}
-                >
-                  {alreadyFollowing ? "Already Followed" : "Add Friend"}
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </Box>
+        <Typography variant="h5" mt={2}>
+            Utilisateurs
+        </Typography>
+        <Box display="flex" flexWrap="wrap" gap={2}>
+            {filteredUsers.map((user) => {
+            const alreadyFollowing = friends.some((f) => f.id === user.id);
+            return (
+                
+                <Card key={user.id} sx={{ width: 250 }}>
+                <CardContent>
+                    <Typography>{user.username}</Typography>
+                    <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={alreadyFollowing}
+                    onClick={() => handleFollow(user.id)}
+                    >
+                    {alreadyFollowing ? "Already Followed" : "Add Friend"}
+                    </Button>
+                </CardContent>
+                </Card>
+            );
+            })}
+        </Box>
 
-      <Typography variant="h5" mt={4}>
-        Mes amis
-      </Typography>
-      <Box display="flex" flexWrap="wrap" gap={2}>
-        {friends.length > 0 ? (
-          friends.map((friend) => (
-            <Card key={friend.id} sx={{ width: 250 }}>
-              <CardContent>
-                <Typography>{friend.username}</Typography>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => handleUnfollow(friend.id)}
-                >
-                  Retirer en amis
-                </Button>
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          <Typography>Il n'y a pas d'amis ici.</Typography>
-        )}
-      </Box>
-    </Box>
-  );
+        <Typography variant="h5" mt={4}>
+            Mes amis
+        </Typography>
+        <Box display="flex" flexWrap="wrap" gap={2}>
+            {friends.length > 0 ? (
+            friends.map((friend) => (
+                <Card key={friend.id} sx={{ width: 250 }}>
+                <CardContent>
+                    <Typography>{friend.username}</Typography>
+                    <Button variant="contained" color="secondary" onClick={() => handleUnfollow(friend.id)}>
+                    Retirer en amis
+                    </Button>
+                </CardContent>
+                </Card>
+            ))
+            ) : (
+            <Typography>Il n'y a pas d'amis ici.</Typography>
+            )}
+        </Box>
+        </Box>
+        </>
+    );
 };
 
 export default Friends;
