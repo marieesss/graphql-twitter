@@ -82,7 +82,7 @@ const Profile: React.FC = () => {
   return (
     <>
       <Navbar />
-      <Container maxWidth="md" sx={{ mt: 10 }}>
+      <Container maxWidth="md" sx={{ mt: 8 }}>
         <Box sx={{ p: 3, boxShadow: 3, borderRadius: '12px', backgroundColor: '#fff', mb: 4 }}>
           <Typography variant="h4" gutterBottom>Profil de {user?.username}</Typography>
           <Typography variant="body1">Nom : {user?.name} {user?.surname}</Typography>
