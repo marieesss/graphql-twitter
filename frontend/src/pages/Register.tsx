@@ -1,70 +1,46 @@
+// src/pages/Register.tsx
 import React, { useState } from 'react';
 import { Container, Box, TextField, Button, Typography, Link } from '@mui/material';
-import { gql, useMutation } from '@apollo/client';
+import { useCreateUserMutation } from '../generated/graphql';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-
-const CREATE_USER_MUTATION = gql`
-  mutation CreateUser(
-    $username: String!, 
-    $password: String!, 
-    $email: String!, 
-    $name: String!, 
-    $surname: String!, 
-    $bio: String
-  ) {
-    createUser(
-      username: $username, 
-      password: $password, 
-      email: $email, 
-      name: $name, 
-      surname: $surname, 
-      bio: $bio
-    ) {
-      code
-      success
-      message
-      user {
-        id
-        username
-      }
-    }
-  }
-`;
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [name, setName] = useState<string>('');
-  const [surname, setSurname] = useState<string>('');
-  const [bio, setBio] = useState<string>('');
-  const [errorMsg, setErrorMsg] = useState<string>('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
+  const [bio, setBio] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const [createUser, { loading }] = useMutation(CREATE_USER_MUTATION, {
+  const [createUser, { loading }] = useCreateUserMutation({
     onCompleted: (data) => {
-      if (data.createUser.success) {
-        // Si inscription réussie, redirige vers la page de connexion
+      if (data.createUser?.success) {
         navigate('/login');
       } else {
-        setErrorMsg(data.createUser.message);
+        setErrorMsg(data.createUser?.message || 'Erreur inconnue');
       }
     },
-    onError: (error) => {
-      setErrorMsg(error.message);
-    }
+    onError: (error) => setErrorMsg(error.message)
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await createUser({ 
-      variables: { username, password, email, name, surname, bio } 
-    });
+    await createUser({ variables: { username, password, email, name, surname, bio } });
   };
 
   return (
     <Container maxWidth="sm">
-      <Box mt={8} p={4} boxShadow={3}>
+      <Box
+        mt={8}
+        p={4}
+        sx={{
+          boxShadow: 3,
+          borderRadius: '12px',
+          backgroundColor: '#fff'
+        }}
+      >
         <Typography variant="h4" component="h1" align="center" gutterBottom>
           Inscription
         </Typography>

@@ -121,11 +121,11 @@ export type Mutation = {
   createLike?: Maybe<CreateLikeResponse>;
   createPost?: Maybe<PostsResponse>;
   createUser?: Maybe<CreateUserResponse>;
-  deleteComment?: Maybe<GetCommentsResponse>;
+  deleteComment?: Maybe<DeleteResponse>;
   deleteFollower?: Maybe<DeleteResponse>;
   deleteFollowing?: Maybe<DeleteResponse>;
   deleteLike?: Maybe<DeleteResponse>;
-  deletePost?: Maybe<DeletePostsResponse>;
+  deletePost?: Maybe<DeleteResponse>;
   signIn?: Maybe<SigninResponse>;
   updateComment?: Maybe<GetCommentsResponse>;
   updatePost?: Maybe<PostsResponse>;
@@ -517,11 +517,11 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   createLike?: Resolver<Maybe<ResolversTypes['CreateLikeResponse']>, ParentType, ContextType, Partial<MutationCreateLikeArgs>>;
   createPost?: Resolver<Maybe<ResolversTypes['PostsResponse']>, ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'text'>>;
   createUser?: Resolver<Maybe<ResolversTypes['CreateUserResponse']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'email' | 'name' | 'password' | 'surname' | 'username'>>;
-  deleteComment?: Resolver<Maybe<ResolversTypes['GetCommentsResponse']>, ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'comId'>>;
+  deleteComment?: Resolver<Maybe<ResolversTypes['DeleteResponse']>, ParentType, ContextType, RequireFields<MutationDeleteCommentArgs, 'comId'>>;
   deleteFollower?: Resolver<Maybe<ResolversTypes['DeleteResponse']>, ParentType, ContextType, RequireFields<MutationDeleteFollowerArgs, 'follower'>>;
   deleteFollowing?: Resolver<Maybe<ResolversTypes['DeleteResponse']>, ParentType, ContextType, RequireFields<MutationDeleteFollowingArgs, 'following'>>;
   deleteLike?: Resolver<Maybe<ResolversTypes['DeleteResponse']>, ParentType, ContextType, Partial<MutationDeleteLikeArgs>>;
-  deletePost?: Resolver<Maybe<ResolversTypes['DeletePostsResponse']>, ParentType, ContextType, RequireFields<MutationDeletePostArgs, 'postId'>>;
+  deletePost?: Resolver<Maybe<ResolversTypes['DeleteResponse']>, ParentType, ContextType, RequireFields<MutationDeletePostArgs, 'postId'>>;
   signIn?: Resolver<Maybe<ResolversTypes['SigninResponse']>, ParentType, ContextType, RequireFields<MutationSignInArgs, 'password' | 'username'>>;
   updateComment?: Resolver<Maybe<ResolversTypes['GetCommentsResponse']>, ParentType, ContextType, RequireFields<MutationUpdateCommentArgs, 'comId' | 'text'>>;
   updatePost?: Resolver<Maybe<ResolversTypes['PostsResponse']>, ParentType, ContextType, RequireFields<MutationUpdatePostArgs, 'postId' | 'text'>>;

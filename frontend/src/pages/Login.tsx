@@ -1,41 +1,27 @@
+// src/pages/Login.tsx
 import React, { useState } from 'react';
 import { Container, Box, TextField, Button, Typography, Link } from '@mui/material';
-import { gql, useMutation } from '@apollo/client';
+import { useSignInMutation } from '../generated/graphql';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-
-const SIGNIN_MUTATION = gql`
-  mutation SignIn($username: String!, $password: String!) {
-    signIn(username: $username, password: $password) {
-      code
-      success
-      message
-      token
-      id
-    }
-  }
-`;
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [errorMsg, setErrorMsg] = useState<string>('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const [signIn, { loading }] = useMutation(SIGNIN_MUTATION, {
+  const [signIn, { loading }] = useSignInMutation({
     onCompleted: (data) => {
-      if (data.signIn.success) {
-        localStorage.setItem('token', data.signIn.token);
-        localStorage.setItem('userId', data.signIn.id);     
+      if (data.signIn?.success) {
+        localStorage.setItem('token', data.signIn.token || '');
+        localStorage.setItem('userId', data.signIn.id || '');
         localStorage.setItem('username', username);
-        
         navigate('/home');
       } else {
-        setErrorMsg(data.signIn.message);
+        setErrorMsg(data.signIn?.message || 'Erreur inconnue');
       }
     },
-    onError: (error) => {
-      setErrorMsg(error.message);
-    }
+    onError: (error) => setErrorMsg(error.message)
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,7 +31,15 @@ const Login: React.FC = () => {
 
   return (
     <Container maxWidth="sm">
-      <Box mt={8} p={4} boxShadow={3}>
+      <Box
+        mt={8}
+        p={4}
+        sx={{
+          boxShadow: 3,
+          borderRadius: '12px',
+          backgroundColor: '#fff'
+        }}
+      >
         <Typography variant="h4" component="h1" align="center" gutterBottom>
           Connexion
         </Typography>
