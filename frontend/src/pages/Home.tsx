@@ -22,6 +22,8 @@ import {
   IconButton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import {
@@ -40,97 +42,97 @@ const Home: React.FC = () => {
   const username = localStorage.getItem('username') || 'Utilisateur';
   const { data, loading, error, refetch } = useGetPostsQuery();
 
-  const [commentInputs, setCommentInputs] = useState<{ [key: string]: string }>({});
+  const [commentInputs, setCommentInputs] = useState<Record<string, string>>({});
   const [openDialog, setOpenDialog] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const [deletePost] = useDeletePostMutation({
-    onCompleted: (data) => {
-      if (data.deletePost?.success) {
+    onCompleted: (res) => {
+      if (res.deletePost?.success) {
         setSnackbarMessage('Post supprimé avec succès.');
         setSnackbarOpen(true);
         refetch();
       } else {
-        setSnackbarMessage(data.deletePost?.message || 'Erreur');
+        setSnackbarMessage(res.deletePost?.message || 'Erreur');
         setSnackbarOpen(true);
       }
       setOpenDialog(false);
     },
-    onError: (error) => {
-      setSnackbarMessage(error.message);
+    onError: (err) => {
+      setSnackbarMessage(err.message);
       setSnackbarOpen(true);
       setOpenDialog(false);
     }
   });
 
   const [createLike] = useCreateLikeMutation({
-    onCompleted: (data) => {
-      if (data.createLike?.success) refetch();
+    onCompleted: (res) => {
+      if (res.createLike?.success) refetch();
       else {
-        setSnackbarMessage(data.createLike?.message || 'Erreur');
+        setSnackbarMessage(res.createLike?.message || 'Erreur');
         setSnackbarOpen(true);
       }
     },
-    onError: (error) => {
-      setSnackbarMessage(error.message);
+    onError: (err) => {
+      setSnackbarMessage(err.message);
       setSnackbarOpen(true);
     }
   });
 
   const [deleteLike] = useDeleteLikeMutation({
-    onCompleted: (data) => {
-      if (data.deleteLike?.success) refetch();
+    onCompleted: (res) => {
+      if (res.deleteLike?.success) refetch();
       else {
-        setSnackbarMessage(data.deleteLike?.message || 'Erreur');
+        setSnackbarMessage(res.deleteLike?.message || 'Erreur');
         setSnackbarOpen(true);
       }
     },
-    onError: (error) => {
-      setSnackbarMessage(error.message);
+    onError: (err) => {
+      setSnackbarMessage(err.message);
       setSnackbarOpen(true);
     }
   });
 
   const [createComment] = useCreateCommentMutation({
-    onCompleted: (data) => {
-      if (data.createComment?.success) refetch();
+    onCompleted: (res) => {
+      if (res.createComment?.success) refetch();
       else {
-        setSnackbarMessage(data.createComment?.message || 'Erreur');
+        setSnackbarMessage(res.createComment?.message || 'Erreur');
         setSnackbarOpen(true);
       }
     },
-    onError: (error) => {
-      setSnackbarMessage(error.message);
+    onError: (err) => {
+      setSnackbarMessage(err.message);
       setSnackbarOpen(true);
     }
   });
 
   const [createCommentLike] = useCreateCommentLikeMutation({
-    onCompleted: (data) => {
-      if (data.createLike && data.createLike.success) refetch();
+    onCompleted: (res) => {
+      if (res.createLike && res.createLike.success) refetch();
       else {
-        setSnackbarMessage(data.createLike?.message || 'Erreur');
+        setSnackbarMessage(res.createLike?.message || 'Erreur');
         setSnackbarOpen(true);
       }
     },
-    onError: (error) => {
-      setSnackbarMessage(error.message);
+    onError: (err) => {
+      setSnackbarMessage(err.message);
       setSnackbarOpen(true);
     }
   });
 
   const [deleteCommentLike] = useDeleteCommentLikeMutation({
-    onCompleted: (data) => {
-      if (data.deleteLike && data.deleteLike.success) refetch();
+    onCompleted: (res) => {
+      if (res.deleteLike && res.deleteLike.success) refetch();
       else {
-        setSnackbarMessage(data.deleteLike?.message || 'Erreur');
+        setSnackbarMessage(res.deleteLike?.message || 'Erreur');
         setSnackbarOpen(true);
       }
     },
-    onError: (error) => {
-      setSnackbarMessage(error.message);
+    onError: (err) => {
+      setSnackbarMessage(err.message);
       setSnackbarOpen(true);
     }
   });
@@ -173,9 +175,9 @@ const Home: React.FC = () => {
   if (loading) return <CircularProgress />;
   if (error) return <Typography variant="body1">Erreur : {error.message}</Typography>;
 
-  const postsArray = data?.getPosts?.post?.slice().sort(
-    (a: any, b: any) => new Date(b.date_create).getTime() - new Date(a.date_create).getTime()
-  ) || [];
+  const postsArray = (data?.getPosts?.post ?? [])
+    .filter((p): p is NonNullable<typeof p> => p !== null)
+    .sort((a, b) => new Date(b.date_create).getTime() - new Date(a.date_create).getTime());
 
   return (
     <>
@@ -196,9 +198,9 @@ const Home: React.FC = () => {
             Créer un post
           </Button>
         </Box>
-        <Grid container spacing={3}>
-          {postsArray.map((post: any) => {
-            const userLiked = post.likes && post.likes.some((like: any) => like.user.username === username);
+        <Grid container spacing={3} justifyContent="center">
+          {postsArray.map((post) => {
+            const userLiked = post.likes?.some((like) => like?.user?.username === username) || false;
             return (
               <Grid item xs={12} key={post.id}>
                 <Card sx={{ borderRadius: '12px', boxShadow: 3 }}>
@@ -213,7 +215,7 @@ const Home: React.FC = () => {
                   <CardContent>
                     <Typography variant="subtitle1" color="textSecondary" gutterBottom>
                       <Link
-                        to={`/profile/${post.user.id}`}
+                        to={`/profile/${post.user?.id}`}
                         style={{
                           textDecoration: 'none',
                           color: 'inherit',
@@ -221,7 +223,7 @@ const Home: React.FC = () => {
                           fontWeight: 'bold'
                         }}
                       >
-                        {post.user?.username || 'Inconnu'}
+                        @{post.user?.username || 'Inconnu'}
                       </Link>{' '}
                       - {new Date(post.date_create).toLocaleString()}
                     </Typography>
@@ -231,11 +233,27 @@ const Home: React.FC = () => {
                     </Typography>
                     <Box display="flex" justifyContent="space-between" alignItems="center">
                       <Button variant="outlined" color="primary" onClick={() => handleLikeToggle(post.id, userLiked)}>
-                        {userLiked ? 'Unlike' : 'Like'} ({post.likes ? post.likes.length : 0})
+                        {userLiked ? (
+                          <>
+                            <FavoriteIcon sx={{ color: 'red', mr: 0.5 }} />
+                            
+                          </>
+                        ) : (
+                          <>
+                            <FavoriteBorderIcon sx={{ mr: 0.5 }} />
+                            
+                          </>
+                        )}{" "}
+                        ({post.likes?.length || 0})
                       </Button>
                       {post.user?.username === username && (
                         <Box>
-                          <Button variant="outlined" color="primary" onClick={() => navigate('/edit-post', { state: { post } })} sx={{ mr: 1 }}>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => navigate('/edit-post', { state: { post } })}
+                            sx={{ mr: 1 }}
+                          >
                             Modifier
                           </Button>
                           <Button variant="outlined" color="error" onClick={() => handleDelete(post.id)}>
@@ -248,25 +266,36 @@ const Home: React.FC = () => {
                       <Typography variant="subtitle2" gutterBottom>
                         Commentaires :
                       </Typography>
-                      {post.comment &&
-                        post.comment.map((com: any) => {
-                          const commentLiked = com.likes && com.likes.some((like: any) => like.user.username === username);
-                          return (
-                            <Box key={com.id} sx={{ ml: 2, mt: 1, p: 1, border: '1px solid #ccc', borderRadius: '8px' }}>
-                              <Typography variant="caption">
-                                {com.user?.username || 'Inconnu'} - {new Date(com.date_create).toLocaleString()}
-                              </Typography>
-                              <Typography variant="body2" sx={{ mt: 0.5 }}>
-                                {com.text}
-                              </Typography>
-                              <Box mt={1}>
-                                <Button variant="outlined" size="small" onClick={() => handleCommentLikeToggle(com.id, commentLiked)}>
-                                  {commentLiked ? 'Unlike' : 'Like'} ({com.likes ? com.likes.length : 0})
-                                </Button>
-                              </Box>
+                      {post.comment?.map((com) => {
+                        const commentLiked = com?.likes?.some((like) => like?.user?.username === username) || false;
+                        return (
+                          <Box key={com?.id} sx={{ ml: 2, mt: 1, p: 1, border: '1px solid #ccc', borderRadius: '8px' }}>
+                            <Typography variant="caption">
+                              {com?.user?.username || 'Inconnu'} - {new Date(com?.date_create || "").toLocaleString()}
+                            </Typography>
+                            <Box mt={1}>
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={() => handleCommentLikeToggle(com!.id, commentLiked)}
+                              >
+                                {commentLiked ? (
+                                  <>
+                                    <FavoriteIcon sx={{ color: 'red', mr: 0.5 }} />
+                                    
+                                  </>
+                                ) : (
+                                  <>
+                                    <FavoriteBorderIcon sx={{ mr: 0.5 }} />
+                                    
+                                  </>
+                                )}
+                                ({com?.likes?.length || 0})
+                              </Button>
                             </Box>
-                          );
-                        })}
+                          </Box>
+                        );
+                      })}
                       <Box component="form" onSubmit={(e) => handleCommentSubmit(e, post.id)} sx={{ mt: 2 }}>
                         <TextField
                           label="Ajouter un commentaire"
@@ -296,7 +325,9 @@ const Home: React.FC = () => {
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
-          <DialogContentText>Êtes-vous sûr de vouloir supprimer ce post ?</DialogContentText>
+          <DialogContentText>
+            Êtes-vous sûr de vouloir supprimer ce post ?
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} color="primary">
