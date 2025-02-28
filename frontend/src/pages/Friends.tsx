@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CircularProgress, Button, TextField, Box, Typography, Card, CardContent } from "@mui/material";
+import { CircularProgress, Button, TextField, Box, Typography, Card, CardContent, MenuItem, Select, FormControl, InputLabel, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import {
@@ -14,6 +14,7 @@ const Friends: React.FC = () => {
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
   const [search, setSearch] = useState<string>("");
+  const [filter, setFilter] = useState<string>("all"); 
 
   useEffect(() => {
     if (!token) {
@@ -64,14 +65,17 @@ const Friends: React.FC = () => {
     );
   }
 
-  // Gestion des utilisateurs en supprimant les valeurs nulles
   const users = (dataUsers?.getUsers?.users ?? []).filter(user => user !== null);
   const friends = (dataFriends?.getUsers?.users?.[0]?.following ?? []).filter(friend => friend !== null);
 
-  // Filtrer les utilisateurs pour la recherche et éviter les `null`
-  const filteredUsers = users.filter(
-    (u) => u && u.username.toLowerCase().includes(search.toLowerCase()) && u.id !== userId
-  );
+  const filteredUsers = users.filter((u) => {
+    if (!u || !u.username.toLowerCase().includes(search.toLowerCase()) || u.id === userId) return false;
+    const isFollowing = friends.some((f) => f?.id === u.id);
+
+    if (filter === "followed") return isFollowing;
+    if (filter === "notFollowed") return !isFollowing;
+    return true;
+  });
 
   const handleFollowToggle = async (followId: string, isFollowing: boolean) => {
     if (isFollowing) {
@@ -84,61 +88,76 @@ const Friends: React.FC = () => {
   return (
     <>
       <Navbar />
-      <Box p={10}>
+      <Box p={5} maxWidth="1100px" margin="auto">
         <Typography variant="h4" fontWeight="bold" gutterBottom align="center">
           Liste des utilisateurs
         </Typography>
 
-        <TextField
-          label="Rechercher un utilisateur..."
-          variant="outlined"
-          fullWidth
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          margin="normal"
-        />
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <TextField
+            label="Rechercher un utilisateur..."
+            variant="outlined"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            sx={{ width: "48%" }}
+          />
 
-        <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center" mt={2}>
+          <FormControl sx={{ width: "48%" }}>
+            <InputLabel>Filtrer</InputLabel>
+            <Select value={filter} onChange={(e) => setFilter(e.target.value)}>
+              <MenuItem value="all">Tous</MenuItem>
+              <MenuItem value="followed">Suivis</MenuItem>
+              <MenuItem value="notFollowed">Non suivis</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+
+        {/* Liste des utilisateurs en grille 4 colonnes */}
+        <Grid container spacing={3} justifyContent="center">
           {filteredUsers.length > 0 ? (
             filteredUsers.map((user) => {
               if (!user) return null;
               const isFollowing = friends.some((f) => f?.id === user.id);
 
               return (
-                <Card
-                  key={user.id}
-                  sx={{
-                    width: 280,
-                    borderRadius: "12px",
-                    boxShadow: 3,
-                    cursor: "pointer",
-                    transition: "0.3s",
-                    "&:hover": { transform: "scale(1.05)" },
-                  }}
-                  onClick={() => navigate(`/profile/${user.id}`)}
-                >
-                  <CardContent>
-                    <Typography variant="h6" fontWeight="bold">{user.username}</Typography>
-                    <Button
-                      variant={isFollowing ? "outlined" : "contained"}
-                      color={isFollowing ? "secondary" : "primary"}
-                      fullWidth
-                      onClick={(e) => {
-                        e.stopPropagation(); // Empêche la navigation lors du clic sur le bouton
-                        handleFollowToggle(user.id, isFollowing);
-                      }}
-                      sx={{ mt: 1 }}
-                    >
-                      {isFollowing ? "Unfollow" : "Follow"}
-                    </Button>
-                  </CardContent>
-                </Card>
+                <Grid item xs={12} sm={6} md={4} lg={3} key={user.id}>
+                  <Card
+                    sx={{
+                      borderRadius: "12px",
+                      boxShadow: 3,
+                      cursor: "pointer",
+                      transition: "0.3s",
+                      "&:hover": { transform: "scale(1.05)", boxShadow: 6 },
+                    }}
+                    onClick={() => navigate(`/profile/${user.id}`)}
+                  >
+                    <CardContent>
+                      <Typography variant="h6" fontWeight="bold" align="center">
+                        {user.username}
+                      </Typography>
+                      <Button
+                        variant={isFollowing ? "outlined" : "contained"}
+                        color={isFollowing ? "secondary" : "primary"}
+                        fullWidth
+                        onClick={(e) => {
+                          e.stopPropagation(); 
+                          handleFollowToggle(user.id, isFollowing);
+                        }}
+                        sx={{ mt: 1 }}
+                      >
+                        {isFollowing ? "Unfollow" : "Follow"}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Grid>
               );
             })
           ) : (
-            <Typography variant="body1">Aucun utilisateur trouvé.</Typography>
+            <Typography variant="body1" align="center" mt={2} width="100%">
+              Aucun utilisateur trouvé.
+            </Typography>
           )}
-        </Box>
+        </Grid>
       </Box>
     </>
   );
