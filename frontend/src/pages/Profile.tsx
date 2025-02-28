@@ -1,33 +1,43 @@
-import React from 'react';
-import { Container, Typography, Card, CardContent, CardMedia, CircularProgress, Box, Button } from '@mui/material';
-import { useParams, Navigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import { useGetUserProfileQuery, useGetUserFriendsQuery, useCreateFollowMutation, useDeleteFollowingMutation } from "../generated/graphql";
+import React, { useState, useEffect } from "react";
+import { CircularProgress, Button, TextField, Box, Typography, Card, CardContent } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import {
+  useQueryQuery,
+  useGetUserFriendsQuery,
+  useCreateFollowMutation,
+  useDeleteFollowingMutation,
+} from "../generated/graphql";
 
-const Profile: React.FC = () => {
-  const { userId: paramUserId } = useParams();
-  const loggedInUserId = localStorage.getItem('userId');
-  const token = localStorage.getItem('token');
-  const userId = paramUserId || loggedInUserId;
+const Friends: React.FC = () => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+  const [search, setSearch] = useState<string>("");
 
-  if (!userId) {
-    return <Navigate to="/login" replace />;
-  }
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token, navigate]);
 
-  const { data, loading, error, refetch } = useGetUserProfileQuery({
-    variables: { userId },
-    context: { headers: { Authorization: `Bearer ${token}` } },
-  });
+  // Fetch all users
+  const { loading: loadingUsers, error: errorUsers, data: dataUsers, refetch: refetchUsers } =
+    useQueryQuery({
+      context: { headers: { Authorization: `Bearer ${token}` } },
+    });
 
-  const { data: friendsData, refetch: refetchFriends } = useGetUserFriendsQuery({
-    variables: { userId: loggedInUserId },
-    context: { headers: { Authorization: `Bearer ${token}` } },
-  });
+  // Fetch current user's friends
+  const { loading: loadingFriends, error: errorFriends, data: dataFriends, refetch: refetchFriends } =
+    useGetUserFriendsQuery({
+      variables: { userId },
+      context: { headers: { Authorization: `Bearer ${token}` } },
+    });
 
   const [createFollow] = useCreateFollowMutation({
     context: { headers: { Authorization: `Bearer ${token}` } },
     onCompleted: () => {
-      refetch();
+      refetchUsers();
       refetchFriends();
     },
   });
@@ -35,96 +45,105 @@ const Profile: React.FC = () => {
   const [deleteFollowing] = useDeleteFollowingMutation({
     context: { headers: { Authorization: `Bearer ${token}` } },
     onCompleted: () => {
-      refetch();
+      refetchUsers();
       refetchFriends();
     },
   });
 
-  if (loading) return <CircularProgress />;
-  if (error) return <Typography variant="body1">Erreur : {error.message}</Typography>;
-
-  const users = data?.getUsers?.users ?? [];
-  if (!users || users.length === 0) {
+  if (loadingUsers || loadingFriends) {
     return (
-      <>
-        <Navbar />
-        <Container maxWidth="md" sx={{ mt: 8 }}>
-          <Typography variant="body1">Aucun profil trouvé.</Typography>
-        </Container>
-      </>
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <CircularProgress />
+      </Box>
     );
   }
 
-  const user = users[0];
-  if (!user) return <Typography variant="body1">Profil introuvable.</Typography>;
+  if (errorUsers || errorFriends) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <Typography color="error">Erreur : {errorUsers?.message || errorFriends?.message}</Typography>
+      </Box>
+    );
+  }
 
-  const friends = friendsData?.getUsers?.users?.[0]?.following?.filter(f => f !== null) ?? [];
-  const isFollowing = friends.some((friend) => friend?.id === user.id);
+  // Gestion des utilisateurs en supprimant les valeurs nulles
+  const users = (dataUsers?.getUsers?.users ?? []).filter(user => user !== null);
+  const friends = (dataFriends?.getUsers?.users?.[0]?.following ?? []).filter(friend => friend !== null);
 
-  const handleFollow = async () => {
-    if (user?.id) {
-      await createFollow({ variables: { following: user.id } });
+  // Filtrer les utilisateurs pour la recherche et éviter les `null`
+  const filteredUsers = users.filter(
+    (u) => u && u.username.toLowerCase().includes(search.toLowerCase()) && u.id !== userId
+  );
+
+  const handleFollowToggle = async (followId: string, isFollowing: boolean) => {
+    if (isFollowing) {
+      await deleteFollowing({ variables: { follower: followId } });
+    } else {
+      await createFollow({ variables: { following: followId } });
     }
   };
-
-  const handleUnfollow = async () => {
-    if (user?.id) {
-      await deleteFollowing({ variables: { follower: user.id } });
-    }
-  };
-
-  const sortedPosts = user?.posts
-    ? user.posts.filter((post): post is NonNullable<typeof post> => post !== null)
-        .slice()
-        .sort((a, b) => new Date(b?.date_create ?? 0).getTime() - new Date(a?.date_create ?? 0).getTime())
-    : [];
 
   return (
     <>
       <Navbar />
-      <Container maxWidth="md" sx={{ mt: 10 }}>
-        <Box sx={{ p: 3, boxShadow: 3, borderRadius: '12px', backgroundColor: '#fff', mb: 4 }}>
-          <Typography variant="h4" gutterBottom>Profil de {user?.username}</Typography>
-          <Typography variant="body1">Nom : {user?.name} {user?.surname}</Typography>
-          <Typography variant="body1">Email : {user?.email}</Typography>
-          {user?.bio && <Typography variant="body1">Bio : {user?.bio}</Typography>}
-          {loggedInUserId !== user.id && (
-            <Box mt={2}>
-              {isFollowing ? (
-                <Button variant="contained" color="secondary" onClick={handleUnfollow}>
-                  Unfollow
-                </Button>
-              ) : (
-                <Button variant="contained" color="primary" onClick={handleFollow}>
-                  Add Friend
-                </Button>
-              )}
-            </Box>
+      <Box p={5}>
+        <Typography variant="h4" fontWeight="bold" gutterBottom align="center">
+          Liste des utilisateurs
+        </Typography>
+
+        <TextField
+          label="Rechercher un utilisateur..."
+          variant="outlined"
+          fullWidth
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          margin="normal"
+        />
+
+        <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center" mt={2}>
+          {filteredUsers.length > 0 ? (
+            filteredUsers.map((user) => {
+              if (!user) return null;
+              const isFollowing = friends.some((f) => f?.id === user.id);
+
+              return (
+                <Card
+                  key={user.id}
+                  sx={{
+                    width: 280,
+                    borderRadius: "12px",
+                    boxShadow: 3,
+                    cursor: "pointer",
+                    transition: "0.3s",
+                    "&:hover": { transform: "scale(1.05)" },
+                  }}
+                  onClick={() => navigate(`/profile/${user.id}`)}
+                >
+                  <CardContent>
+                    <Typography variant="h6" fontWeight="bold">{user.username}</Typography>
+                    <Button
+                      variant={isFollowing ? "outlined" : "contained"}
+                      color={isFollowing ? "secondary" : "primary"}
+                      fullWidth
+                      onClick={(e) => {
+                        e.stopPropagation(); // Empêche la navigation lors du clic sur le bouton
+                        handleFollowToggle(user.id, isFollowing);
+                      }}
+                      sx={{ mt: 1 }}
+                    >
+                      {isFollowing ? "Unfollow" : "Follow"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })
+          ) : (
+            <Typography variant="body1">Aucun utilisateur trouvé.</Typography>
           )}
         </Box>
-        <Typography variant="h5" gutterBottom>
-          Mes posts
-        </Typography>
-        {sortedPosts.length > 0 ? (
-          sortedPosts.map((post) => (
-            <Card key={post.id} sx={{ mb: 2, borderRadius: '12px' }}>
-              {post.image && (
-                <CardMedia component="img" height="200" image={post.image} alt="Image du post" />
-              )}
-              <CardContent>
-                <Typography variant="body1">{post.text}</Typography>
-                <Typography variant="caption" color="textSecondary">
-                  {new Date(post.date_create).toLocaleString()}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          <Typography variant="body1">Aucun post à afficher.</Typography>
-        )}
-      </Container>
+      </Box>
     </>
   );
 };
 
-export default Profile;
+export default Friends;
